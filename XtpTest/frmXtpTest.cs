@@ -10,6 +10,7 @@ using System.Windows.Forms;
 
 using XTP.API;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace XtpTest
 {
@@ -25,10 +26,10 @@ namespace XtpTest
         string log_path = "xtp_log";
         string key;
         string userid;
-        string pwd ;
+        string pwd;
         string quote_ip;
-        int quote_port ;
-        int trade_port ;
+        int quote_port;
+        int trade_port;
         string trade_ip;
         ulong tradeSessionID = 0;
         Dictionary<string, double> tickMap = new Dictionary<string, double>();
@@ -48,7 +49,9 @@ namespace XtpTest
             {
                 log("MD {0} login success", userid);
 
-               quoter.SubscribeMarketData(insts.ToArray(), EXCHANGE_TYPE.XTP_EXCHANGE_SZ, true);
+                quoter.SubscribeMarketData(insts.ToArray(), EXCHANGE_TYPE.XTP_EXCHANGE_SZ, true);
+
+                quoter.QueryAllTickers(EXCHANGE_TYPE.XTP_EXCHANGE_SH);
             }
             else
             {
@@ -80,7 +83,7 @@ namespace XtpTest
         }
         private void Trader_OnTradeEvent(TradeReportStruct trade)
         {
-            log("Trader_OnTradeEvent():{0} {1} {2}@{3}",trade.ticker,trade.side.ToString(),trade.quantity,trade.price);
+            log("Trader_OnTradeEvent():{0} {1} {2}@{3}", trade.ticker, trade.side.ToString(), trade.quantity, trade.price);
         }
 
         private void Trader_OnQueryTradeEvent(RspInfoStruct A_0, TradeReportStruct A_1, int A_2, bool A_3)
@@ -139,7 +142,8 @@ namespace XtpTest
 
         private void Quoter_OnQueryAllTickersEvent(RspInfoStruct A_0, QuoteStaticInfoStruct A_1, bool A_2)
         {
-            log("Quoter_OnQueryAllTickersEvent():{0}", A_1.ticker);
+            string msg = string.Format("Quoter_OnQueryAllTickersEvent():{0}({1}),PreClose={2}", A_1.ticker, A_1.ticker_name.Trim('\0'),A_1.pre_close_price);
+            log(msg);
         }
 
 
@@ -173,7 +177,7 @@ namespace XtpTest
         private void Quoter_OnSubMarketDataEvent(RspInfoStruct rspinfo, SpecificTickerStruct tick, bool A_2)
         {
             log("Quoter_OnSubMarketDataEvent():{0} subscribe {1} {2}",
-                tick.ticker,rspinfo.error_id==0?"success":"fail",rspinfo.error_msg);
+                tick.ticker, rspinfo.error_id == 0 ? "success" : "fail", rspinfo.error_msg);
         }
 
 
@@ -197,7 +201,7 @@ namespace XtpTest
             {
                 return;
             }
-            foreach(var item in tickMap)
+            foreach (var item in tickMap)
             {
                 var order = new XTPOrderInsert()
                 {
@@ -208,7 +212,7 @@ namespace XtpTest
                     price = item.Value,
                     price_type = PRICE_TYPE.XTP_PRICE_LIMIT,
                     side = SIDE_TYPE.XTP_SIDE_BUY,
-                    ticker =item.Key
+                    ticker = item.Key
                 };
                 trader.InsertOrder(order, tradeSessionID);
             }
@@ -220,15 +224,37 @@ namespace XtpTest
             {
                 Directory.CreateDirectory(log_path);
             }
+            string fname = "account.json";
+            if (File.Exists(fname) == false)
+            {
+                MessageBox.Show("请配置账户信息");
+                return;
+            }
+            string content = File.ReadAllText(fname);
+            config = JsonConvert.DeserializeObject<AccountConfig>(content);
+
             //加载账号配置
             client_id = 1;
-            key = "测试账户邮件中的Key";
-            userid = "测试账户邮件中的UserID";
-            pwd = "测试账户邮件中的Password";
-            quote_ip = "120.27.164.138";
-            quote_port = 6002;
-            trade_port = 6001;
-            trade_ip = "120.27.164.69";
+            key = config.Token;
+            userid = config.UserID;
+            pwd = config.Password;
+            quote_ip = config.QuoteIP;
+            quote_port = config.QuotePort;
+            trade_port = config.TradePort;
+            trade_ip = config.TradeIP;
         }
+
+        AccountConfig config = null;
+    }
+
+    public class AccountConfig
+    {
+        public string Token { get; set; }
+        public string UserID { get; set; }
+        public string Password { get; set; }
+        public string QuoteIP { get; set; }
+        public int QuotePort { get; set; }
+        public string TradeIP { get; set; }
+        public int TradePort { get; set; }
     }
 }

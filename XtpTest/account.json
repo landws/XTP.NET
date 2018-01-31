@@ -1,0 +1,9 @@
+﻿{
+  "Token": "XTP账户的Key",
+  "UserID": "XTP账户",
+  "Password": "XTP密码",
+  "QuoteIP": "120.27.164.138",
+  "QuotePort": 6002,
+  "TradeIP": "120.27.164.69",
+  "TradePort": 6001
+}

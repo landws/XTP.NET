@@ -429,13 +429,15 @@ namespace XTP
 			double pe_ratio2;
 		};
 
-		[StructLayout(LayoutKind::Sequential)] public ref struct  QuoteStaticInfoStruct {
+		[StructLayout(LayoutKind::Sequential)] 
+		public ref struct  QuoteStaticInfoStruct {
 			///交易所代码
 			int exchange_id;
 			///合约代码（不包含交易所信息），不带空格，以'\0'结尾
 			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = XTP_TICKER_LEN)]
 			String^ ticker;
 			/// 合约名称
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = XTP_TICKER_NAME_LEN)]
 			String^ ticker_name;
 			/// 合约类型
 			int ticker_type;
