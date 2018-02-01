@@ -36,7 +36,7 @@ namespace XtpTest
 
         private void init()
         {
-            quoter = new XtpQuote(client_id, log_path);
+            quoter = new XtpQuote(client_id, log_path, LOG_LEVEL.XTP_LOG_LEVEL_WARNING);
             quoter.OnSubMarketDataEvent += Quoter_OnSubMarketDataEvent;
             quoter.OnDisconnectedEvent += Quoter_OnDisconnectedEvent;
             quoter.OnErrorEvent += Quoter_OnErrorEvent;

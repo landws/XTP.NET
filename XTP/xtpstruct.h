@@ -40,6 +40,16 @@ namespace XTP
 			XTP_PROTOCOL_UDP		///<采用UDP方式传输
 		};
 
+		///日志输出级别类型
+		public enum class LOG_LEVEL {
+			XTP_LOG_LEVEL_FATAL, ///<严重错误级别
+			XTP_LOG_LEVEL_ERROR, ///<错误级别
+			XTP_LOG_LEVEL_WARNING, ///<警告级别
+			XTP_LOG_LEVEL_INFO,   ///<info级别
+			XTP_LOG_LEVEL_DEBUG,  ///<debug级别
+			XTP_LOG_LEVEL_TRACE   ///<trace级别
+		};
+
 		[StructLayout(LayoutKind::Sequential)] 
 		public ref struct  RspInfoStruct
 		{

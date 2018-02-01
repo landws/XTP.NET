@@ -4,11 +4,12 @@
 
 namespace XTP
 {
-	//common delegates
+	namespace API {
+		//common delegates
 
-	//quote delegates
+		//quote delegates
 
 
-	//trader delegates
-
+		//trader delegates
+	}
 }
