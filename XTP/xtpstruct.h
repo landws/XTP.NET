@@ -3,32 +3,31 @@
 
 using namespace System;
 using namespace::Runtime::InteropServices;
-namespace XTP
-{
+namespace XTP {
 	namespace API {
 
 		/// 存放版本号的字符串长度
-#define XTP_VERSION_LEN 16
+#define VERSION_LEN 16
 	/// 版本号类型
-		typedef char XTPVersionType[XTP_VERSION_LEN];
+		typedef char VersionType[VERSION_LEN];
 		/// 可交易日字符串长度
-#define XTP_TRADING_DAY_LEN 9
+#define TRADING_DAY_LEN 9
 	/// 存放证券代码的字符串长度
-#define XTP_TICKER_LEN 16
+#define TICKER_LEN 16
 	/// 存放证券名称的字符串长度
-#define XTP_TICKER_NAME_LEN 64
+#define TICKER_NAME_LEN 64
 	/// 本地报单编号的字符串长度
-#define XTP_LOCAL_ORDER_LEN         11
+#define LOCAL_ORDER_LEN         11
 	/// 交易所单号的字符串长度
-#define XTP_ORDER_EXCH_LEN          17
+#define ORDER_EXCH_LEN          17
 	/// 成交执行编号的字符串长度
-#define XTP_EXEC_ID_LEN             18
+#define EXEC_ID_LEN             18
 	/// 交易所交易员代码字符串长度
-#define XTP_BRANCH_PBU_LEN          7
+#define BRANCH_PBU_LEN          7
 	/// 用户资金账户的字符串长度
-#define XTP_ACCOUNT_NAME_LEN        16
+#define ACCOUNT_NAME_LEN        16
 	///错误信息的字符串长度
-#define XTP_ERR_MSG_LEN  124
+#define ERR_MSG_LEN  124
 #pragma region basic struct
 
 	/// <summary>
@@ -50,13 +49,13 @@ namespace XTP
 			XTP_LOG_LEVEL_TRACE   ///<trace级别
 		};
 
-		[StructLayout(LayoutKind::Sequential)] 
+		[StructLayout(LayoutKind::Sequential)]
 		public ref struct  RspInfoStruct
 		{
 			///错误代码
 			Int32	error_id;
 			///错误信息
-			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = XTP_ERR_MSG_LEN)]
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = ERR_MSG_LEN)]
 			String^	error_msg;
 		};
 
@@ -67,7 +66,7 @@ namespace XTP
 			///交易所代码
 			int exchange_id;
 			///合约代码（不包含交易所信息）例如"600000  "
-			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = XTP_TICKER_LEN)]
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_LEN)]
 			String^	ticker;
 		};
 #pragma endregion
@@ -84,7 +83,26 @@ namespace XTP
 			XTP_ACCOUNT_DERIVE,		///<衍生品账户
 			XTP_ACCOUNT_UNKNOWN		///<未知账户类型
 		};
+		/////////////////////////////////////////////////////////////////////////
+		///@brief XTP_FUND_TRANSFER_TYPE是资金流转方向类型
+		/////////////////////////////////////////////////////////////////////////
+		public enum FUND_TRANSFER_TYPE
+		{
+			XTP_FUND_TRANSFER_OUT = 0,		///<转出 从XTP转出到柜台
+			XTP_FUND_TRANSFER_IN,	        ///<转入 从柜台转入XTP
+			XTP_FUND_TRANSFER_UNKNOWN		///<未知类型
+		};
 
+		/////////////////////////////////////////////////////////////////////////
+		///@brief XTP_FUND_OPER_STATUS柜台资金操作结果
+		/////////////////////////////////////////////////////////////////////////
+		public enum FUND_OPER_STATUS {
+			XTP_FUND_OPER_PROCESSING = 0,	///<XOMS已收到，正在处理中
+			XTP_FUND_OPER_SUCCESS,			///<成功
+			XTP_FUND_OPER_FAILED,			///<失败
+			XTP_FUND_OPER_SUBMITTED,		///<已提交到集中柜台处理
+			XTP_FUND_OPER_UNKNOWN			///<未知
+		};
 		/// <summary>
 		/// XTP_EXCHANGE_TYPE 是交易所类型
 		/// </summary>
@@ -122,11 +140,11 @@ namespace XTP
 		/////////////////////////////////////////////////////////////////////////
 		///TXTPTradeTypeType是成交类型类型
 		/////////////////////////////////////////////////////////////////////////
-		public enum struct TradeTypeType:Byte
-		{			
+		public enum struct TradeTypeType :Byte
+		{
 			COMMON = '0',//普通成交
 			CASH = '1',//现金替代
-			PRIMARY ='2'//一级市场成交
+			PRIMARY = '2'//一级市场成交
 		};
 		///查询分级基金信息结构体
 		[StructLayout(LayoutKind::Sequential)] public ref struct  QueryStructuredFundInfoReq
@@ -166,6 +184,7 @@ namespace XTP
 			///交易市场
 			MARKET_TYPE    market;
 			///ETF买卖代码
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_LEN)]
 			String^               ticker;
 		};
 
@@ -173,10 +192,13 @@ namespace XTP
 		//////////////////////////////////////////////////////////////////////////
 		///查询股票ETF合约基本情况--响应结构体
 		//////////////////////////////////////////////////////////////////////////
-		[StructLayout(LayoutKind::Sequential)] public ref struct  QueryETFBaseRsp
+		[StructLayout(LayoutKind::Sequential)] 
+		public ref struct  QueryETFBaseRsp
 		{
 			MARKET_TYPE     market;                             ///<交易市场
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_LEN)]
 			String^                etf;                ///<etf代码,买卖,申赎统一使用该代码
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_LEN)]
 			String^                subscribe_redemption_ticker;    ///<etf申购赎回代码
 			Int32             unit;                               ///<最小申购赎回单位对应的ETF份数,例如上证"50ETF"就是900000
 			Int32             subscribe_status;                   ///<是否允许申购,1-允许,0-禁止
@@ -205,15 +227,19 @@ namespace XTP
 		//////////////////////////////////////////////////////////////////////////
 		///查询股票ETF合约成分股信息--响应结构体
 		//////////////////////////////////////////////////////////////////////////
-		[StructLayout(LayoutKind::Sequential)] public ref struct  QueryETFComponentRsp
+		[StructLayout(LayoutKind::Sequential)] 
+		public ref struct  QueryETFComponentRsp
 		{
 			///交易市场
 			MARKET_TYPE     market;
 			///ETF代码
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_LEN)]
 			String^                ticker;
 			///成份股代码
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_LEN)]
 			String^                component_ticker;
 			///成份股名称
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_NAME_LEN)]
 			String^                component_name;
 			///成份股数量
 			Int64             quantity;
@@ -231,12 +257,15 @@ namespace XTP
 		//////////////////////////////////////////////////////////////////////////
 		///查询当日可申购新股信息
 		//////////////////////////////////////////////////////////////////////////
-		[StructLayout(LayoutKind::Sequential)] public ref struct  QueryIPOTickerRsp {
+		[StructLayout(LayoutKind::Sequential)] 
+		public ref struct  QueryIPOTickerRsp {
 			///交易市场
 			MARKET_TYPE     market;
 			///申购代码
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_LEN)]
 			String^                ticker;
 			///申购股票名称
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_NAME_LEN)]
 			String^                ticker_name;
 			///申购价格
 			double              price;
@@ -250,14 +279,15 @@ namespace XTP
 		//////////////////////////////////////////////////////////////////////////
 		///查询用户申购额度
 		//////////////////////////////////////////////////////////////////////////
-		[StructLayout(LayoutKind::Sequential)] public ref struct  QueryIPOQuotaRsp {
+		[StructLayout(LayoutKind::Sequential)] 
+		public ref struct  QueryIPOQuotaRsp {
 			///交易市场
 			MARKET_TYPE     market;
 			///可申购额度
 			Int32             quantity;
 		};
 
-		
+
 
 
 		//////////////////////////////////////////////////////////////////////////
@@ -294,20 +324,20 @@ namespace XTP
 			XTP_TBT_TRADE = 2,		///<逐笔成交
 		};
 
-		#pragma endregion
+#pragma endregion
 
-		#pragma region quote struct
+#pragma region quote struct
 
 
 		///行情
-		[StructLayout(LayoutKind::Sequential)] 
+		[StructLayout(LayoutKind::Sequential)]
 		public ref struct  MarketDataStruct
 		{
 			// 代码
 			///交易所代码
 			int exchange_id;
 			///合约代码（不包含交易所信息）
-			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = XTP_TICKER_LEN)]
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_LEN)]
 			String^	ticker;
 
 			// 股票等价格
@@ -439,15 +469,15 @@ namespace XTP
 			double pe_ratio2;
 		};
 
-		[StructLayout(LayoutKind::Sequential)] 
+		[StructLayout(LayoutKind::Sequential)]
 		public ref struct  QuoteStaticInfoStruct {
 			///交易所代码
 			int exchange_id;
 			///合约代码（不包含交易所信息），不带空格，以'\0'结尾
-			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = XTP_TICKER_LEN)]
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_LEN)]
 			String^ ticker;
 			/// 合约名称
-			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = XTP_TICKER_NAME_LEN)]
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_NAME_LEN)]
 			String^ ticker_name;
 			/// 合约类型
 			int ticker_type;
@@ -465,11 +495,12 @@ namespace XTP
 			Int32 sell_qty_unit;
 		};
 		///定单薄
-		[StructLayout(LayoutKind::Sequential)] public ref struct  OrderBook {
+		[StructLayout(LayoutKind::Sequential)] 
+		public ref struct  OrderBook {
 			///交易所代码
 			EXCHANGE_TYPE exchange_id;
 			///合约代码（不包含交易所信息），不带空格，以'\0'结尾
-			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = XTP_TICKER_LEN)]
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_LEN)]
 			String^    ticker;
 
 			///最新价
@@ -537,8 +568,8 @@ namespace XTP
 		};
 
 		///逐笔数据信息
-		[StructLayout(LayoutKind::Sequential)] 
-		public ref struct  XTPTickByTickStruct {
+		[StructLayout(LayoutKind::Sequential)]
+		public ref struct  TickByTickStruct {
 			///交易所代码
 			EXCHANGE_TYPE exchange_id;
 			///合约代码（不包含交易所信息），不带空格，以'\0'结尾
@@ -561,7 +592,8 @@ namespace XTP
 
 
 		///供查询的最新信息
-		[StructLayout(LayoutKind::Sequential)] public ref struct  XTPTickerPriceInfo {
+		[StructLayout(LayoutKind::Sequential)] 
+		public ref struct  TickerPriceInfo {
 			///交易所代码
 			EXCHANGE_TYPE exchange_id;
 			///合约代码（不包含交易所信息），不带空格，以'\0'结尾
@@ -597,7 +629,7 @@ namespace XTP
 		public enum class TOrderTypeType
 		{
 			Normal = '0',	///正常
-			DeriveFromQuote= '1',		///报价衍生
+			DeriveFromQuote = '1',		///报价衍生
 			DeriveFromCombination = '2',		///组合衍生
 			Combination = '3',		///组合报单
 			ConditionalOrder = '4',		///条件单
@@ -730,7 +762,7 @@ namespace XTP
 		//////////////////////////////////////////////////////////////////////////
 		///账户资金查询响应结构体
 		//////////////////////////////////////////////////////////////////////////
-		[StructLayout(LayoutKind::Sequential)] 
+		[StructLayout(LayoutKind::Sequential)]
 		public ref struct  QueryAssetRspStruct
 		{
 			///总资产
@@ -770,6 +802,7 @@ namespace XTP
 			///撤单在XTP系统中的id
 			UInt32                order_cancel_xtp_id;
 			///合约代码
+			[MarshalAs(UnmanagedType::ByValArray, SizeConst = TICKER_LEN)]
 			String^                    ticker;
 			///交易市场
 			MARKET_TYPE         market;
@@ -794,6 +827,7 @@ namespace XTP
 			///成交金额
 			double                  trade_amount;
 			///本地报单编号 OMS生成的单号
+			[MarshalAs(UnmanagedType::ByValArray, SizeConst = LOCAL_ORDER_LEN)]
 			String^                    order_local_id;
 			///报单状态
 			ORDER_STATUS_TYPE   order_status;
@@ -820,12 +854,14 @@ namespace XTP
 			///报单引用，小于1000000
 			UInt32                order_client_id;
 			///合约代码
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_LEN)]
 			String^                     ticker;
 			///交易市场
 			MARKET_TYPE          market;
 			///订单号
 			UInt64                 local_order_id;
 			///成交编号，深交所唯一，上交所每笔交易唯一
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = EXEC_ID_LEN)]
 			String^                    exec_id;
 			///价格
 			double                   price;
@@ -838,12 +874,14 @@ namespace XTP
 			///成交序号 --回报记录号，每个交易所唯一
 			UInt64                 report_index;
 			///报单编号 --交易所单号
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = ORDER_EXCH_LEN)]
 			String^                     order_exch_id;
 			///成交类型  --成交回报中的执行类型
 			TTradeTypeType        trade_type;
 			///买卖方向
 			SIDE_TYPE            side;
 			///交易所交易员代码 
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = BRANCH_PBU_LEN)]
 			String^                    branch_pbu;
 		};
 
@@ -851,7 +889,8 @@ namespace XTP
 		//////////////////////////////////////////////////////////////////////////
 		///查询股票持仓情况
 		//////////////////////////////////////////////////////////////////////////
-		[StructLayout(LayoutKind::Sequential)] public ref struct  QueryStkPositionStruct
+		[StructLayout(LayoutKind::Sequential)] 
+		public ref struct  QueryStkPositionStruct
 		{
 			///证券代码
 			String^	 ticker;
@@ -876,7 +915,24 @@ namespace XTP
 			array<UInt64>^ unknown;
 		};
 
+		/////////////////////////////////////////////////////////////////////////
+		///资金内转流水通知
+		/////////////////////////////////////////////////////////////////////////
+		[StructLayout(LayoutKind::Sequential)]
+		public ref struct  FundTransferNotice
+		{
+			///资金内转编号
+			UInt64	            serial_id;
+			///内转类型
+			FUND_TRANSFER_TYPE	transfer_type;
+			///金额
+			double	                amount;
+			///操作结果 
+			FUND_OPER_STATUS    oper_status;
+			///操作时间
+			UInt64	            transfer_time;
+		};
 #pragma endregion
 
-}
+	}
 }

@@ -139,19 +139,25 @@
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="XTP.h" />
+    <ClInclude Include="XtpQuoteAdapter.h" />
+    <ClInclude Include="XtpQuoteSpi.h" />
     <ClInclude Include="xtpstruct.h" />
+    <ClInclude Include="XtpTraderAdapter.h" />
+    <ClInclude Include="XtpTraderSpi.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
-    <ClCompile Include="Quote.cpp" />
+    <ClCompile Include="XtpQuoteAdapter.cpp" />
     <ClCompile Include="Stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Trade.cpp" />
     <ClCompile Include="XTP.cpp" />
+    <ClCompile Include="XtpQuoteSpi.cpp" />
+    <ClCompile Include="XtpTraderAdapter.cpp" />
+    <ClCompile Include="XtpTraderSpi.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

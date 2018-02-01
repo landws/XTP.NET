@@ -33,6 +33,18 @@
     <ClInclude Include="Delegates.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="XtpQuoteSpi.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="XtpQuoteAdapter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="XtpTraderAdapter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="XtpTraderSpi.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="XTP.cpp">
@@ -44,10 +56,16 @@
     <ClCompile Include="Stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Quote.cpp">
+    <ClCompile Include="XtpQuoteSpi.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Trade.cpp">
+    <ClCompile Include="XtpQuoteAdapter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="XtpTraderAdapter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="XtpTraderSpi.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -20,8 +20,8 @@ namespace XtpTest
         {
             InitializeComponent();
         }
-        XtpTrader trader;
-        XtpQuote quoter;
+        XtpTraderAdapter trader;
+        XtpQuoteAdapter quoter;
         int client_id = 1;
         string log_path = "xtp_log";
         string key;
@@ -36,7 +36,7 @@ namespace XtpTest
 
         private void init()
         {
-            quoter = new XtpQuote(client_id, log_path, LOG_LEVEL.XTP_LOG_LEVEL_WARNING);
+            quoter = new XtpQuoteAdapter(client_id, log_path, LOG_LEVEL.XTP_LOG_LEVEL_WARNING);
             quoter.OnSubMarketDataEvent += Quoter_OnSubMarketDataEvent;
             quoter.OnDisconnectedEvent += Quoter_OnDisconnectedEvent;
             quoter.OnErrorEvent += Quoter_OnErrorEvent;
@@ -58,7 +58,7 @@ namespace XtpTest
                 var rsp = quoter.GetApiLastError();
                 log("MD {0} login fail:{1}/{2}", userid, rsp.error_id, rsp.error_msg);
             }
-            trader = new XtpTrader(client_id, key, log_path, TE_RESUME_TYPE.XTP_TERT_QUICK);
+            trader = new XtpTraderAdapter(client_id, key, log_path, TE_RESUME_TYPE.XTP_TERT_QUICK);
             trader.OnDisconnectedEvent += Trader_OnDisconnectedEvent;
             trader.OnErrorEvent += Trader_OnErrorEvent;
             trader.OnOrderCancelEvent += Trader_OnOrderCancelEvent;
@@ -81,32 +81,32 @@ namespace XtpTest
                 log("TD {0} login fail:{1}/{2}", userid, rsp.error_id, rsp.error_msg);
             }
         }
-        private void Trader_OnTradeEvent(TradeReportStruct trade)
+        private void Trader_OnTradeEvent(TradeReportStruct trade, UInt64 session_id)
         {
             log("Trader_OnTradeEvent():{0} {1} {2}@{3}", trade.ticker, trade.side.ToString(), trade.quantity, trade.price);
         }
 
-        private void Trader_OnQueryTradeEvent(RspInfoStruct A_0, TradeReportStruct A_1, int A_2, bool A_3)
+        private void Trader_OnQueryTradeEvent(RspInfoStruct A_0, TradeReportStruct A_1, int A_2, bool A_3, UInt64 session_id)
         {
             log("Trader_OnQueryTradeEvent");
         }
 
-        private void Trader_OnQueryPositionEvent(RspInfoStruct A_0, QueryStkPositionStruct A_1, int A_2, bool A_3)
+        private void Trader_OnQueryPositionEvent(RspInfoStruct A_0, QueryStkPositionStruct A_1, int A_2, bool A_3, UInt64 session_id)
         {
             log("Trader_OnQueryPositionEvent");
         }
 
-        private void Trader_OnQueryOrderEvent(RspInfoStruct A_0, OrderInfoStruct A_1, int A_2, bool A_3)
+        private void Trader_OnQueryOrderEvent(RspInfoStruct A_0, OrderInfoStruct A_1, int A_2, bool A_3, UInt64 session_id)
         {
             log("Trader_OnQueryOrderEvent");
         }
 
-        private void Trader_OnQueryAssetEvent(RspInfoStruct A_0, QueryAssetRspStruct A_1, int A_2, bool A_3)
+        private void Trader_OnQueryAssetEvent(RspInfoStruct A_0, QueryAssetRspStruct A_1, int A_2, bool A_3, UInt64 session_id)
         {
             log("Trader_OnQueryAssetEvent");
         }
 
-        private void Trader_OnOrderEvent(RspInfoStruct rsp, OrderInfoStruct orderInfo)
+        private void Trader_OnOrderEvent(RspInfoStruct rsp, OrderInfoStruct orderInfo, UInt64 session_id)
         {
             log("Trader_OnOrderEvent():");
             if (rsp.error_id == 0)
@@ -120,7 +120,7 @@ namespace XtpTest
             }
         }
 
-        private void Trader_OnOrderCancelEvent(RspInfoStruct A_0, OrderCancelInfoStruct A_1)
+        private void Trader_OnOrderCancelEvent(RspInfoStruct A_0, OrderCancelInfoStruct A_1,UInt64 session_id)
         {
             log("Trader_OnOrderCancelEvent():");
         }
