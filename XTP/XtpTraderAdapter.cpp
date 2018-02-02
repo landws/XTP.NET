@@ -63,6 +63,12 @@ namespace XTP
 		void XtpTraderAdapter::SubscribePublicTopic(TE_RESUME_TYPE resume_type) {
 			pTdApi->SubscribePublicTopic((XTP_TE_RESUME_TYPE)resume_type);
 		}
+
+		void XtpTraderAdapter::SetHeartBeatInterval(UInt32 interval)
+		{
+			pTdApi->SetHeartBeatInterval(interval);
+		}
+
 		String^ XtpTraderAdapter::GetTradingDay() {
 			return  gcnew String(pTdApi->GetTradingDay());
 		}

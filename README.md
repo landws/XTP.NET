@@ -6,9 +6,9 @@ XTP.NET是[中泰证券极速交易接口](https://xtp.zts.com.cn/home)的.NET�
 项目fork自https://github.com/zerochocobo/XTP.NET,
 在该项目的基础上，想做以下改动：
 
-1. 更新XTP API到最新版本，当前版本为1.1.16.9
-2. 增加.NET版本使用的实例
-3. 修改非托管代码转化为托管代码的方式
+1. 更新XTP API到最新版本，即版本1.1.16.9（**已完成**）
+2. 增加.NET版本使用的样例（**完成行情部分**）
+3. 修改非托管代码转化为托管代码的方式（**完成行情部分**）
 
 ### 开发环境
 - .NET版本：4.6.1
@@ -18,8 +18,8 @@ XTP.NET是[中泰证券极速交易接口](https://xtp.zts.com.cn/home)的.NET�
 ### 使用说明
 1. 下载项目后，首先编译项目XTP,会在解决方案文件夹的Debug文件夹中生成XTP.dll；
 2. 编译项目XtpTest；
-3. 拷贝***sdk\lib\x86***下的dll到XtpTest生成的***bin\Degbug***文件夹下；
-4. 可以直接运行***XtpTest.exe***或者调试项目XtpTest
+3. 拷贝**sdk\lib\x86**下的dll到XtpTest生成的**bin\Degbug**文件夹下；
+4. 可以直接运行**XtpTest.exe**或者调试项目XtpTest
 ### 其他注意事项：
 
 - API的所有文档在doc\XTP_API_20171204_1.1.16.9.zip中，API介绍在doc\XTP_intro_v3.4.pdf

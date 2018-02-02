@@ -531,7 +531,8 @@ namespace XTP {
 		};
 
 		///逐笔委托(仅适用深交所)
-		[StructLayout(LayoutKind::Sequential)] public ref struct  TickByTickEntrust {
+		[StructLayout(LayoutKind::Sequential)] 
+		public ref struct  TickByTickEntrust {
 			///频道代码
 			Int32 channel_no;
 			///委托序号(在同一个channel_no内唯一，从1开始连续)
@@ -547,7 +548,8 @@ namespace XTP {
 		};
 
 		///逐笔成交
-		[StructLayout(LayoutKind::Sequential)] public ref struct  TickByTickTrade {
+		[StructLayout(LayoutKind::Sequential)] 
+		public ref struct  TickByTickTrade {
 			///频道代码
 			Int32 channel_no;
 			///委托序号(在同一个channel_no内唯一，从1开始连续)
@@ -573,6 +575,7 @@ namespace XTP {
 			///交易所代码
 			EXCHANGE_TYPE exchange_id;
 			///合约代码（不包含交易所信息），不带空格，以'\0'结尾
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_LEN)]
 			String^ ticker;
 			///预留
 			Int64 seq;
@@ -597,6 +600,7 @@ namespace XTP {
 			///交易所代码
 			EXCHANGE_TYPE exchange_id;
 			///合约代码（不包含交易所信息），不带空格，以'\0'结尾
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_LEN)]
 			String^ ticker;
 			///最新价
 			double last_price;
@@ -800,9 +804,9 @@ namespace XTP {
 			///报单操作引用，用户自定义，小于1000000
 			UInt32                order_cancel_client_id;
 			///撤单在XTP系统中的id
-			UInt32                order_cancel_xtp_id;
+			UInt64                order_cancel_xtp_id;
 			///合约代码
-			[MarshalAs(UnmanagedType::ByValArray, SizeConst = TICKER_LEN)]
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_LEN)]
 			String^                    ticker;
 			///交易市场
 			MARKET_TYPE         market;
@@ -827,7 +831,7 @@ namespace XTP {
 			///成交金额
 			double                  trade_amount;
 			///本地报单编号 OMS生成的单号
-			[MarshalAs(UnmanagedType::ByValArray, SizeConst = LOCAL_ORDER_LEN)]
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = LOCAL_ORDER_LEN)]
 			String^                    order_local_id;
 			///报单状态
 			ORDER_STATUS_TYPE   order_status;

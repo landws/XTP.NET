@@ -237,7 +237,9 @@ namespace XTP
 		///@param is_last 是否此次订阅的最后一个应答，当为最后一个的时候为true，如果为false，表示还有其他后续消息响应
 		///@remark 每条订阅的合约均对应一条订阅应答，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		void XtpQuoteSpi::OnSubOrderBook(XTPST *ticker, XTPRI *error_info, bool is_last)
-		{}
+		{
+			m_pAdapter->OnSubOrderBookEvent(MNConv<SpecificTickerStruct^,XTPST>::N2M(ticker), RspInfoConverter(error_info), is_last);
+		}
 
 		///退订行情订单簿应答
 		///@param ticker 详细的合约取消订阅情况
@@ -245,12 +247,16 @@ namespace XTP
 		///@param is_last 是否此次取消订阅的最后一个应答，当为最后一个的时候为true，如果为false，表示还有其他后续消息响应
 		///@remark 每条取消订阅的合约均对应一条取消订阅应答，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		void XtpQuoteSpi::OnUnSubOrderBook(XTPST *ticker, XTPRI *error_info, bool is_last)
-		{}
+		{
+			m_pAdapter->OnUnSubOrderBookEvent(MNConv<SpecificTickerStruct^, XTPST>::N2M(ticker), RspInfoConverter(error_info), is_last);
+		}
 
 		///行情订单簿通知
 		///@param order_book 行情订单簿数据，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		void XtpQuoteSpi::OnOrderBook(XTPOB *order_book)
-		{}
+		{
+			m_pAdapter->OnOrderBookEvent(MNConv<OrderBook^, XTPOB>::N2M(order_book));
+		}
 
 		///订阅逐笔行情应答
 		///@param ticker 详细的合约订阅情况
@@ -258,7 +264,9 @@ namespace XTP
 		///@param is_last 是否此次订阅的最后一个应答，当为最后一个的时候为true，如果为false，表示还有其他后续消息响应
 		///@remark 每条订阅的合约均对应一条订阅应答，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		void XtpQuoteSpi::OnSubTickByTick(XTPST *ticker, XTPRI *error_info, bool is_last)
-		{}
+		{
+			m_pAdapter->OnSubTickByTickEvent(MNConv<SpecificTickerStruct^, XTPST>::N2M(ticker), RspInfoConverter(error_info), is_last);
+		}
 
 		///退订逐笔行情应答
 		///@param ticker 详细的合约取消订阅情况
@@ -266,49 +274,63 @@ namespace XTP
 		///@param is_last 是否此次取消订阅的最后一个应答，当为最后一个的时候为true，如果为false，表示还有其他后续消息响应
 		///@remark 每条取消订阅的合约均对应一条取消订阅应答，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		void XtpQuoteSpi::OnUnSubTickByTick(XTPST *ticker, XTPRI *error_info, bool is_last)
-		{}
+		{
+			m_pAdapter->OnUnSubTickByTickEvent(MNConv<SpecificTickerStruct^, XTPST>::N2M(ticker), RspInfoConverter(error_info), is_last);
+		}
 
 		///逐笔行情通知
 		///@param tbt_data 逐笔行情数据，包括逐笔委托和逐笔成交，此为共用结构体，需要根据type来区分是逐笔委托还是逐笔成交，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		void XtpQuoteSpi::OnTickByTick(XTPTBT *tbt_data)
-		{}
+		{
+			m_pAdapter->OnTickByTickEvent(MNConv<TickByTickStruct^, XTPTBT>::N2M(tbt_data));
+		}
 
 		///订阅全市场的行情应答
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
 		void XtpQuoteSpi::OnSubscribeAllMarketData(XTPRI *error_info)
-		{}
+		{
+			m_pAdapter->OnSubscribeAllMarketDataEvent(RspInfoConverter(error_info));
+		}
 
 		///退订全市场的行情应答
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
 		void XtpQuoteSpi::OnUnSubscribeAllMarketData(XTPRI *error_info)
-		{}
+		{
+			m_pAdapter->OnUnSubscribeAllMarketDataEvent(RspInfoConverter(error_info));
+		}
 
 		///订阅全市场的行情订单簿应答
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
 		void XtpQuoteSpi::OnSubscribeAllOrderBook(XTPRI *error_info)
-		{}
+		{
+			m_pAdapter->OnSubscribeAllOrderBookEvent(RspInfoConverter(error_info));
+		}
 
 		///退订全市场的行情订单簿应答
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
 		void XtpQuoteSpi::OnUnSubscribeAllOrderBook(XTPRI *error_info)
-		{}
+		{
+			m_pAdapter->OnUnSubscribeAllOrderBookEvent(RspInfoConverter(error_info));
+		}
 
 		///订阅全市场的逐笔行情应答
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
 		void XtpQuoteSpi::OnSubscribeAllTickByTick(XTPRI *error_info)
-		{}
+		{
+			m_pAdapter->OnSubscribeAllTickByTickEvent(RspInfoConverter(error_info));
+		}
 
 		///退订全市场的逐笔行情应答
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
 		void XtpQuoteSpi::OnUnSubscribeAllTickByTick(XTPRI *error_info)
 		{
-			
+			m_pAdapter->OnUnSubscribeAllTickByTickEvent(RspInfoConverter(error_info));
 		}
 		
 		///查询合约的最新价格信息应答
@@ -316,6 +338,9 @@ namespace XTP
 		///@param error_info 查询合约的最新价格信息时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@param is_last 是否此次查询的最后一个应答，当为最后一个的时候为true，如果为false，表示还有其他后续消息响应
 		void XtpQuoteSpi::OnQueryTickersPriceInfo(XTPTPI* ticker_info, XTPRI *error_info, bool is_last)
-		{}
+		{
+			m_pAdapter->OnQueryTickersPriceInfoEvent(MNConv<TickerPriceInfo^, XTPTPI>::N2M(ticker_info),
+				RspInfoConverter(error_info), is_last);
+		}
 	}
 }

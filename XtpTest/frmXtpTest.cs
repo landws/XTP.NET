@@ -32,31 +32,99 @@ namespace XtpTest
         int trade_port;
         string trade_ip;
         ulong tradeSessionID = 0;
+        Dictionary<string, QuoteStaticInfoStruct> SymbolMap = new Dictionary<string, QuoteStaticInfoStruct>();
         Dictionary<string, double> tickMap = new Dictionary<string, double>();
 
-        private void init()
+        private void frmXtpTest_Load(object sender, EventArgs e)
         {
-            quoter = new XtpQuoteAdapter(client_id, log_path, LOG_LEVEL.XTP_LOG_LEVEL_WARNING);
-            quoter.OnSubMarketDataEvent += Quoter_OnSubMarketDataEvent;
-            quoter.OnDisconnectedEvent += Quoter_OnDisconnectedEvent;
-            quoter.OnErrorEvent += Quoter_OnErrorEvent;
-            quoter.OnDepthMarketDataEvent += Quoter_OnDepthMarketDataEvent;
-            quoter.OnQueryAllTickersEvent += Quoter_OnQueryAllTickersEvent;
-            quoter.OnUnSubMarketDataEvent += Quoter_OnUnSubMarketDataEvent;
-            quoter.Login(quote_ip, quote_port, userid, pwd, PROTOCOL_TYPE.XTP_PROTOCOL_TCP);
-            List<string> insts = new List<string>() { "000001", "300500" };
-            if (quoter.IsLogin)
+            if (Directory.Exists(log_path) == false)
             {
-                log("MD {0} login success", userid);
+                Directory.CreateDirectory(log_path);
+            }
+            string fname = "account.json";
+            if (File.Exists(fname) == false)
+            {
+                MessageBox.Show("请配置账户信息");
+                return;
+            }
+            string content = File.ReadAllText(fname);
+            config = JsonConvert.DeserializeObject<AccountConfig>(content);
 
-                quoter.SubscribeMarketData(insts.ToArray(), EXCHANGE_TYPE.XTP_EXCHANGE_SZ, true);
+            //加载账号配置
+            client_id = 1;
+            key = config.Token;
+            userid = config.UserID;
+            pwd = config.Password;
+            quote_ip = config.QuoteIP;
+            quote_port = config.QuotePort;
+            trade_port = config.TradePort;
+            trade_ip = config.TradeIP;
+        }
 
-                quoter.QueryAllTickers(EXCHANGE_TYPE.XTP_EXCHANGE_SH);
+        AccountConfig config = null;
+
+        private void log(string fmt, params object[] args)
+        {
+            string msg = string.Format("{0}:  {1}", DateTime.Now.ToString("yyyyMMdd HH:mm:ss"),
+                      string.Format(fmt, args));
+            Console.WriteLine(msg);
+            BeginInvoke((Action)delegate {               
+                rtxtLog.AppendText(string.Format("{0}\r\n", msg));
+                txtLog.AppendText(string.Format("{0}\r\n", msg));
+            });
+        }
+
+        private bool checkStatus(bool isTrader=true)
+        {
+            bool result = false;
+            if (isTrader)
+            {
+                result = trader == null || trader.IsLogin == false ? false : true;
+                if (result == false)
+                {
+                    MessageBox.Show("TD 未登录");
+                }
             }
             else
             {
-                var rsp = quoter.GetApiLastError();
-                log("MD {0} login fail:{1}/{2}", userid, rsp.error_id, rsp.error_msg);
+                result = quoter == null || quoter.IsLogin == false ? false : true;
+                if (result == false)
+                {
+                    MessageBox.Show("MD 未登录");
+                }
+            }
+            return result;
+        }
+       
+        #region TD 请求
+        private void btnOrder_Click(object sender, EventArgs e)
+        {
+            if (checkStatus()==false)
+            {
+                return;
+            }
+            foreach (var item in tickMap)
+            {
+                var order = new XTPOrderInsert()
+                {
+                    market = MARKET_TYPE.XTP_MKT_SZ_A,
+                    order_client_id = (uint)client_id,
+                    quantity = 200,
+                    //order_xtp_id = 0,
+                    price = item.Value,
+                    price_type = PRICE_TYPE.XTP_PRICE_LIMIT,
+                    side = SIDE_TYPE.XTP_SIDE_BUY,
+                    ticker = item.Key
+                };
+                trader.InsertOrder(order, tradeSessionID);
+            }
+        }
+
+        private void btnConnTrader_Click(object sender, EventArgs e)
+        {
+            if (trader != null && trader.IsLogin == true)
+            {
+                return;
             }
             trader = new XtpTraderAdapter(client_id, key, log_path, TE_RESUME_TYPE.XTP_TERT_QUICK);
             trader.OnDisconnectedEvent += Trader_OnDisconnectedEvent;
@@ -81,6 +149,35 @@ namespace XtpTest
                 log("TD {0} login fail:{1}/{2}", userid, rsp.error_id, rsp.error_msg);
             }
         }
+
+        private void btnCancelOrder_Click(object sender, EventArgs e)
+        {
+            if (checkStatus() == false)
+            {
+                return;
+            }
+        }
+
+        private void btnQryOrder_Click(object sender, EventArgs e)
+        {
+            if (checkStatus() == false)
+            {
+                return;
+            }
+        }
+
+        private void btnQryTrade_Click(object sender, EventArgs e)
+        {
+            if (checkStatus() == false)
+            {
+                return;
+            }
+            trader.QueryTrades(new XTPQueryTrader(), tradeSessionID, 0);
+        }
+        #endregion
+
+        #region TD 回调
+
         private void Trader_OnTradeEvent(TradeReportStruct trade, UInt64 session_id)
         {
             log("Trader_OnTradeEvent():{0} {1} {2}@{3}", trade.ticker, trade.side.ToString(), trade.quantity, trade.price);
@@ -120,7 +217,7 @@ namespace XtpTest
             }
         }
 
-        private void Trader_OnOrderCancelEvent(RspInfoStruct A_0, OrderCancelInfoStruct A_1,UInt64 session_id)
+        private void Trader_OnOrderCancelEvent(RspInfoStruct A_0, OrderCancelInfoStruct A_1, UInt64 session_id)
         {
             log("Trader_OnOrderCancelEvent():");
         }
@@ -135,18 +232,184 @@ namespace XtpTest
             log("Trader_OnDisconnectedEvent");
         }
 
+        #endregion
+      
+        #region MD 功能请求
+        private void btnConnectQuote_Click(object sender, EventArgs e)
+        {
+            quoter = new XtpQuoteAdapter(client_id, log_path, LOG_LEVEL.XTP_LOG_LEVEL_WARNING);
+            quoter.OnSubMarketDataEvent += Quoter_OnSubMarketDataEvent;
+            quoter.OnDisconnectedEvent += Quoter_OnDisconnectedEvent;
+            quoter.OnErrorEvent += Quoter_OnErrorEvent;
+            quoter.OnDepthMarketDataEvent += Quoter_OnDepthMarketDataEvent;
+            quoter.OnQueryAllTickersEvent += Quoter_OnQueryAllTickersEvent;
+            quoter.OnUnSubMarketDataEvent += Quoter_OnUnSubMarketDataEvent;
+            quoter.OnOrderBookEvent += Quoter_OnOrderBookEvent;
+            quoter.OnQueryTickersPriceInfoEvent += Quoter_OnQueryTickersPriceInfoEvent;
+            quoter.OnSubOrderBookEvent += Quoter_OnSubOrderBookEvent;
+            quoter.OnSubscribeAllMarketDataEvent += Quoter_OnSubscribeAllMarketDataEvent;
+            quoter.OnSubscribeAllOrderBookEvent += Quoter_OnSubscribeAllOrderBookEvent;
+            quoter.OnSubscribeAllTickByTickEvent += Quoter_OnSubscribeAllTickByTickEvent;
+            quoter.OnSubTickByTickEvent += Quoter_OnSubTickByTickEvent;
+            quoter.OnTickByTickEvent += Quoter_OnTickByTickEvent;
+            quoter.OnUnSubOrderBookEvent += Quoter_OnUnSubOrderBookEvent;
+            quoter.OnUnSubscribeAllMarketDataEvent += Quoter_OnUnSubscribeAllMarketDataEvent;
+            quoter.OnUnSubscribeAllOrderBookEvent += Quoter_OnUnSubscribeAllOrderBookEvent;
+            quoter.OnUnSubscribeAllTickByTickEvent += Quoter_OnUnSubscribeAllTickByTickEvent;
+            quoter.OnUnSubTickByTickEvent += Quoter_OnUnSubTickByTickEvent;
+            quoter.Login(quote_ip, quote_port, userid, pwd, PROTOCOL_TYPE.XTP_PROTOCOL_TCP);
+            if (quoter.IsLogin)
+            {
+                log("MD {0} login success", userid);
+            }
+            else
+            {
+                var rsp = quoter.GetApiLastError();
+                log("MD {0} login fail:{1}/{2}", userid, rsp.error_id, rsp.error_msg);
+            }
+        }
+
+        private void btnQryTickers_Click(object sender, EventArgs e)
+        {
+            if (checkStatus(false) == false)
+            {
+                return;
+            }
+            string symbol = txtMdSymbol.Text.Trim();
+            if (string.IsNullOrEmpty(symbol))
+            {
+                quoter.QueryAllTickers(EXCHANGE_TYPE.XTP_EXCHANGE_SH);
+            }
+            else
+            {
+                var exchange = symbol.StartsWith("6") ? EXCHANGE_TYPE.XTP_EXCHANGE_SH : EXCHANGE_TYPE.XTP_EXCHANGE_SZ;
+                quoter.QueryTickersPriceInfo(new string[] { symbol }, exchange);
+            }
+        }
+
+        private void btnSubMD_Click(object sender, EventArgs e)
+        {
+            if (checkStatus(false) == false)
+            {
+                return;
+            }
+            string symbol = txtMdSymbol.Text.Trim();
+            if (string.IsNullOrEmpty(symbol))
+            {
+                quoter.SubscribeAllMarketData(true);
+            }
+            else
+            {
+                var exchange = symbol.StartsWith("6") ? EXCHANGE_TYPE.XTP_EXCHANGE_SH : EXCHANGE_TYPE.XTP_EXCHANGE_SZ;
+                quoter.SubscribeMarketData(new string[] { symbol }, exchange, true);
+            }
+        }
+
+        private void btnUnsubMD_Click(object sender, EventArgs e)
+        {
+            if (checkStatus(false) == false)
+            {
+                return;
+            }
+            string symbol = txtMdSymbol.Text.Trim();
+            if (string.IsNullOrEmpty(symbol))
+            {
+                quoter.SubscribeAllMarketData(false);
+            }
+            else
+            {
+                var exchange = symbol.StartsWith("6") ? EXCHANGE_TYPE.XTP_EXCHANGE_SH : EXCHANGE_TYPE.XTP_EXCHANGE_SZ;
+                quoter.SubscribeMarketData(new string[] { symbol }, exchange, false);
+            }
+        }
+
+        private void btnSubOrderBook_Click(object sender, EventArgs e)
+        {
+            if (checkStatus(false) == false)
+            {
+                return;
+            }
+            string symbol = txtMdSymbol.Text.Trim();
+            if (string.IsNullOrEmpty(symbol))
+            {
+                quoter.SubscribeAllOrderBook(true);
+            }
+            else
+            {
+                var exchange = symbol.StartsWith("6") ? EXCHANGE_TYPE.XTP_EXCHANGE_SH : EXCHANGE_TYPE.XTP_EXCHANGE_SZ;
+                quoter.SubscribeOrderBook(new string[] { symbol }, exchange, true);
+            }
+        }
+
+        private void btnUnsubOrderBook_Click(object sender, EventArgs e)
+        {
+            if (checkStatus(false) == false)
+            {
+                return;
+            }
+            string symbol = txtMdSymbol.Text.Trim();
+            if (string.IsNullOrEmpty(symbol))
+            {
+                quoter.SubscribeAllOrderBook(false);
+            }
+            else
+            {
+                var exchange = symbol.StartsWith("6") ? EXCHANGE_TYPE.XTP_EXCHANGE_SH : EXCHANGE_TYPE.XTP_EXCHANGE_SZ;
+                quoter.SubscribeOrderBook(new string[] { symbol }, exchange, false);
+            }
+        }
+
+        private void btnSubTick_Click(object sender, EventArgs e)
+        {
+            if (checkStatus(false) == false)
+            {
+                return;
+            }
+            string symbol = txtMdSymbol.Text.Trim();
+            if (string.IsNullOrEmpty(symbol))
+            {
+                quoter.SubscribeAllTickByTick(true);
+            }
+            else
+            {
+                var exchange = symbol.StartsWith("6") ? EXCHANGE_TYPE.XTP_EXCHANGE_SH : EXCHANGE_TYPE.XTP_EXCHANGE_SZ;
+                quoter.SubscribeTickByTick(new string[] { symbol }, exchange, true);
+            }
+        }
+
+        private void btnUnsubTick_Click(object sender, EventArgs e)
+        {
+            if (checkStatus(false) == false)
+            {
+                return;
+            }
+            string symbol = txtMdSymbol.Text.Trim();
+            if (string.IsNullOrEmpty(symbol))
+            {
+                quoter.SubscribeAllTickByTick(false);
+            }
+            else
+            {
+                var exchange = symbol.StartsWith("6") ? EXCHANGE_TYPE.XTP_EXCHANGE_SH : EXCHANGE_TYPE.XTP_EXCHANGE_SZ;
+                quoter.SubscribeTickByTick(new string[] { symbol }, exchange, false);
+            }
+        }
+        #endregion
+
+        #region MD 回调
+
         private void Quoter_OnUnSubMarketDataEvent(RspInfoStruct A_0, SpecificTickerStruct A_1, bool A_2)
         {
             log("OnUnSubMarketDataEvent():{0}", A_1.ticker);
         }
 
-        private void Quoter_OnQueryAllTickersEvent(RspInfoStruct A_0, QuoteStaticInfoStruct A_1, bool A_2)
+        private void Quoter_OnQueryAllTickersEvent(RspInfoStruct A_0, QuoteStaticInfoStruct quoteInfo, bool A_2)
         {
-            string msg = string.Format("Quoter_OnQueryAllTickersEvent():{0}({1}),PreClose={2}", A_1.ticker, A_1.ticker_name.Trim('\0'),A_1.pre_close_price);
+            SymbolMap.Add(quoteInfo.ticker, quoteInfo);
+            string msg = string.Format("Quoter_OnQueryAllTickersEvent():{0}({1}),PreClose={2}", quoteInfo.ticker, quoteInfo.ticker_name.Trim('\0'), quoteInfo.pre_close_price);
             log(msg);
         }
-
-
+        
         private void Quoter_OnDepthMarketDataEvent(MarketDataStruct md, long[] A_1, int A_2, int A_3, long[] A_4, int A_5, int A_6)
         {
             string msg = string.Format("Quoter_OnDepthMarketDataEvent():{0}:Last {1}/{2},Bid {3}/{4},Ask {5}/{6}",
@@ -171,7 +434,7 @@ namespace XtpTest
 
         private void Quoter_OnDisconnectedEvent(int A_0)
         {
-            log("Quoter_OnDisconnectedEvent()");
+            log("Quoter_OnDisconnectedEvent():reason {0}", A_0);
         }
 
         private void Quoter_OnSubMarketDataEvent(RspInfoStruct rspinfo, SpecificTickerStruct tick, bool A_2)
@@ -180,71 +443,75 @@ namespace XtpTest
                 tick.ticker, rspinfo.error_id == 0 ? "success" : "fail", rspinfo.error_msg);
         }
 
-
-        private void log(string fmt, params object[] args)
+        private void Quoter_OnUnSubTickByTickEvent(SpecificTickerStruct ticker, RspInfoStruct error_info, bool is_last)
         {
-            BeginInvoke((Action)delegate {
-                string msg = string.Format("{0}:  {1}", DateTime.Now.ToString("yyyyMMdd HH:mm:ss"),
-                    string.Format(fmt, args));
-                rtxtLog.AppendText(string.Format("{0}\r\n", msg));
-            });
+            log("Quoter_OnUnSubTickByTickEvent():{0}", ticker.ticker);
         }
 
-        private void btnConnect_Click(object sender, EventArgs e)
+        private void Quoter_OnUnSubscribeAllTickByTickEvent(RspInfoStruct error_info)
         {
-            init();
+            log("Quoter_OnUnSubscribeAllTickByTickEvent():{0}", error_info.error_id == 0 ? "success" : "fail");
         }
 
-        private void btnOrder_Click(object sender, EventArgs e)
+        private void Quoter_OnUnSubscribeAllOrderBookEvent(RspInfoStruct error_info)
         {
-            if (trader == null || trader.IsLogin == false)
-            {
-                return;
-            }
-            foreach (var item in tickMap)
-            {
-                var order = new XTPOrderInsert()
-                {
-                    market = MARKET_TYPE.XTP_MKT_SZ_A,
-                    order_client_id = (uint)client_id,
-                    quantity = 200,
-                    //order_xtp_id = 0,
-                    price = item.Value,
-                    price_type = PRICE_TYPE.XTP_PRICE_LIMIT,
-                    side = SIDE_TYPE.XTP_SIDE_BUY,
-                    ticker = item.Key
-                };
-                trader.InsertOrder(order, tradeSessionID);
-            }
+            log("Quoter_OnUnSubscribeAllOrderBookEvent():{0}", error_info.error_id == 0 ? "success" : "fail");
+
         }
 
-        private void frmXtpTest_Load(object sender, EventArgs e)
+        private void Quoter_OnUnSubscribeAllMarketDataEvent(RspInfoStruct error_info)
         {
-            if (Directory.Exists(log_path) == false)
-            {
-                Directory.CreateDirectory(log_path);
-            }
-            string fname = "account.json";
-            if (File.Exists(fname) == false)
-            {
-                MessageBox.Show("请配置账户信息");
-                return;
-            }
-            string content = File.ReadAllText(fname);
-            config = JsonConvert.DeserializeObject<AccountConfig>(content);
-
-            //加载账号配置
-            client_id = 1;
-            key = config.Token;
-            userid = config.UserID;
-            pwd = config.Password;
-            quote_ip = config.QuoteIP;
-            quote_port = config.QuotePort;
-            trade_port = config.TradePort;
-            trade_ip = config.TradeIP;
+            log("Quoter_OnUnSubscribeAllMarketDataEvent():{0}", error_info.error_id == 0 ? "success" : "fail");
         }
 
-        AccountConfig config = null;
+        private void Quoter_OnUnSubOrderBookEvent(SpecificTickerStruct ticker, RspInfoStruct error_info, bool is_last)
+        {
+            log("Quoter_OnUnSubOrderBookEvent():{0}", ticker.ticker);
+        }
+
+        private void Quoter_OnTickByTickEvent(TickByTickStruct tbt_data)
+        {
+            log("Quoter_OnTickByTickEvent():{0} Time {1}", tbt_data.ticker, tbt_data.data_time);
+        }
+
+        private void Quoter_OnSubTickByTickEvent(SpecificTickerStruct ticker, RspInfoStruct error_info, bool is_last)
+        {
+            log("Quoter_OnSubTickByTickEvent():{0}", ticker.ticker);
+        }
+
+        private void Quoter_OnSubscribeAllTickByTickEvent(RspInfoStruct error_info)
+        {
+            log("Quoter_OnSubscribeAllTickByTickEvent():{0}", error_info.error_id == 0 ? "success" : "fail");
+        }
+
+        private void Quoter_OnSubscribeAllOrderBookEvent(RspInfoStruct error_info)
+        {
+            log("Quoter_OnSubscribeAllOrderBookEvent():{0}", error_info.error_id == 0 ? "success" : "fail");
+        }
+
+        private void Quoter_OnSubscribeAllMarketDataEvent(RspInfoStruct error_info)
+        {
+            log("Quoter_OnSubscribeAllMarketDataEvent():{0}", error_info.error_id == 0 ? "success" : "fail");
+        }
+
+        private void Quoter_OnSubOrderBookEvent(SpecificTickerStruct ticker, RspInfoStruct error_info, bool is_last)
+        {
+            log("Quoter_OnSubOrderBookEvent():{0}", ticker.ticker);
+        }
+
+        private void Quoter_OnQueryTickersPriceInfoEvent(TickerPriceInfo ticker_info, RspInfoStruct error_info, bool is_last)
+        {
+            log("Quoter_OnQueryTickersPriceInfoEvent():{0} Last {1}",
+                ticker_info.ticker, ticker_info.last_price);
+        }
+
+        private void Quoter_OnOrderBookEvent(OrderBook order_book)
+        {
+            log("Quoter_OnOrderBookEvent():{0} Last {1}/{2}",
+                order_book.ticker, order_book.last_price, order_book.trades_count);
+        }
+
+        #endregion
     }
 
     public class AccountConfig

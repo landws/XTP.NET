@@ -43,6 +43,11 @@ namespace XTP
 
 			void SubscribePublicTopic(TE_RESUME_TYPE resume_type);
 
+			///设置心跳检测时间间隔，单位为秒
+			///@param interval 心跳检测时间间隔，单位为秒
+			///@remark 此函数必须在Login之前调用
+			void SetHeartBeatInterval(UInt32 interval);
+
 			String^ GetTradingDay();
 
 			//获取API版本号

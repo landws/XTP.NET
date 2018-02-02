@@ -43,13 +43,10 @@ namespace XTP {
 		///@param sock_type “1”代表TCP，“2”代表UDP
 		///@remark 此函数为同步阻塞式，不需要异步等待登录成功，当函数返回即可进行后续操作，此api只能有一个连接
 		int XtpQuoteAdapter::Login(String ^ ip, int port, String ^ investor_id, String ^ password, PROTOCOL_TYPE protocal_type) {
-			char* investor_id_char = (char*)Marshal::StringToHGlobalAnsi(investor_id).ToPointer();
-			char* password_char = (char*)Marshal::StringToHGlobalAnsi(password).ToPointer();
-			char* ip_char = (char*)Marshal::StringToHGlobalAnsi(ip).ToPointer();
-			int loginResult = pUserApi->Login(ip_char, port, investor_id_char, password_char, (XTP_PROTOCOL_TYPE)protocal_type);//XTP_PROTOCOL_TCP
-			Marshal::FreeHGlobal((IntPtr)investor_id_char);
-			Marshal::FreeHGlobal((IntPtr)password_char);
-			Marshal::FreeHGlobal((IntPtr)ip_char);
+			
+			int loginResult = pUserApi->Login(CAutoStrPtr(ip).m_pChar, port,
+				CAutoStrPtr(investor_id).m_pChar,CAutoStrPtr(password).m_pChar, (XTP_PROTOCOL_TYPE)protocal_type);//XTP_PROTOCOL_TCP
+			
 			if (loginResult == 0) {
 				IsLogin = true;
 			}
@@ -66,10 +63,7 @@ namespace XTP {
 		///获取API的系统错误
 		RspInfoStruct^ XtpQuoteAdapter::GetApiLastError() {
 			XTPRI* error_info = pUserApi->GetApiLastError();
-			RspInfoStruct^ resInfo = gcnew RspInfoStruct();
-			resInfo->error_id = error_info->error_id;
-			resInfo->error_msg = gcnew String(error_info->error_msg);
-			return resInfo;
+			return RspInfoConverter(error_info);
 		}
 		//查询所有股票代码
 		int XtpQuoteAdapter::QueryAllTickers(EXCHANGE_TYPE exchange) {
@@ -107,26 +101,29 @@ namespace XTP {
 		///@param is_subscribe 是否是订阅
 		///@remark 可以一次性订阅同一证券交易所的多个合约，无论用户因为何种问题需要重新登录行情服务器，都需要重新订阅行情
 		int XtpQuoteAdapter::SubscribeMarketData(array<String^>^ ticker, EXCHANGE_TYPE exchange, bool is_subscribe) {
-			//marshal_context ^ context = gcnew marshal_context();
-			char** tokensAsAnsi = new char*[ticker->Length];
-			for (int i = 0; i < ticker->Length; i++)
+			
+			int count = ticker->Length;
+			char** chTicker = new char*[count];
+			CAutoStrPtr** asp = new CAutoStrPtr*[count];
+			for (int i = 0; i < count; ++i)
 			{
-				//IntPtr p = Marshal::StringToHGlobalAnsi(ticker[i]);
-				//tokensAsAnsi[i] = static_cast<char*>(p.ToPointer());
-				//Marshal::FreeHGlobal(p);
-				tokensAsAnsi[i] = static_cast<char*>(Marshal::StringToHGlobalAnsi(ticker[i]).ToPointer());
-				//const char* str4 = context->marshal_as<const char*>(ticker[i]);
-				//tokensAsAnsi[i] = str4;
+				CAutoStrPtr* ptr = new CAutoStrPtr(ticker[i]);
+				asp[i] = ptr;
+				chTicker[i] = ptr->m_pChar;
 			}
-			// The marshalled results are freed when context goes out of scope
 			int result = 0;
 			if (is_subscribe) {
-				result = pUserApi->SubscribeMarketData(tokensAsAnsi, ticker->Length, (XTP_EXCHANGE_TYPE)exchange);//订阅股票行情
+				result = pUserApi->SubscribeMarketData(chTicker, ticker->Length, (XTP_EXCHANGE_TYPE)exchange);//订阅股票行情
 			}
 			else {
-				result = pUserApi->UnSubscribeMarketData(tokensAsAnsi, ticker->Length, XTP_EXCHANGE_TYPE(exchange));//取消订阅股票行情
+				result = pUserApi->UnSubscribeMarketData(chTicker, ticker->Length, XTP_EXCHANGE_TYPE(exchange));//取消订阅股票行情
 			}
-			delete[] tokensAsAnsi;    // Please note you must use delete[] here!
+			for (int i = 0; i < count; ++i)
+			{
+				delete asp[i];
+			}
+			delete asp;
+			delete[] chTicker;    // Please note you must use delete[] here!
 									  //delete context;
 			return result;
 		}
@@ -138,13 +135,15 @@ namespace XTP {
 		///@param is_subscribe 是否是订阅
 		///@remark 可以一次性订阅同一证券交易所的多个合约，无论用户因为何种问题需要重新登录行情服务器，都需要重新订阅行情(暂不支持)
 		int XtpQuoteAdapter::SubscribeOrderBook(array<String^>^ ticker, EXCHANGE_TYPE exchage_id, bool is_subscribe)
-		{///@param count 要订阅/退订行情订单簿的合约个数
-
+		{
 			int count = ticker->Length;
 			char** chTicker = new char*[count];
+			CAutoStrPtr** asp = new CAutoStrPtr*[count];
 			for (int i = 0; i < count; ++i)
 			{
-				chTicker[i] =  CAutoStrPtr::CAutoStrPtr(ticker[i]).m_pChar;
+				CAutoStrPtr* ptr = new CAutoStrPtr(ticker[i]);
+				asp[i] = ptr;
+				chTicker[i] = ptr->m_pChar;
 			}
 			int result = 0;
 			if (is_subscribe)
@@ -155,6 +154,11 @@ namespace XTP {
 			{
 				result = pUserApi->UnSubscribeOrderBook(chTicker, count, (XTP_EXCHANGE_TYPE)exchage_id);
 			}
+			for (int i = 0; i < count; ++i)
+			{
+				delete asp[i];
+			}
+			delete asp;
 			delete[] chTicker;
 			return result;
 		}
@@ -169,9 +173,12 @@ namespace XTP {
 		{
 			int count = ticker->Length;
 			char** chTicker = new char*[count];
+			CAutoStrPtr** asp = new CAutoStrPtr*[count];
 			for (int i = 0; i < count; ++i)
 			{
-				chTicker[i] =  CAutoStrPtr::CAutoStrPtr(ticker[i]).m_pChar;
+				CAutoStrPtr* ptr = new CAutoStrPtr(ticker[i]);
+				asp[i] = ptr;
+				chTicker[i] = ptr->m_pChar;//  CAutoStrPtr::CAutoStrPtr(ticker[i]).m_pChar;
 			}
 			int result = 0;
 			if (is_subscribe)
@@ -182,6 +189,11 @@ namespace XTP {
 			{
 				result = pUserApi->UnSubscribeTickByTick(chTicker, count, (XTP_EXCHANGE_TYPE)exchage_id);
 			}
+			for (int i = 0; i < count; ++i)
+			{
+				delete asp[i];
+			}
+			delete asp;
 			delete[] chTicker;
 			return result;
 		}
@@ -242,11 +254,19 @@ namespace XTP {
 		{
 			int count = ticker->Length;
 			char** chTicker = new char*[count];
+			CAutoStrPtr** asp = new CAutoStrPtr*[count];
 			for (int i = 0; i < count; ++i)
 			{
-				chTicker[i] =  CAutoStrPtr::CAutoStrPtr(ticker[i]).m_pChar;
+				CAutoStrPtr* ptr = new CAutoStrPtr(ticker[i]);
+				asp[i] = ptr;
+				chTicker[i] = ptr->m_pChar;
 			}
 			int result = pUserApi->QueryTickersPriceInfo(chTicker, count, (XTP_EXCHANGE_TYPE)exchage_id);
+			for (int i = 0; i < count; ++i)
+			{
+				delete asp[i];
+			}
+			delete asp; 
 			delete[] chTicker;
 			return result;
 		}

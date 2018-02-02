@@ -227,6 +227,215 @@ namespace XTP {
 					}
 				}
 			}
+			event OnSubOrderBookDelegate^ OnSubOrderBookEvent{
+				void add(OnSubOrderBookDelegate^ handler)
+				{
+					OnSubOrderBook_delegate += handler;
+				}
+				void remove(OnSubOrderBookDelegate^ handler)
+				{
+					OnSubOrderBook_delegate -= handler;
+				}
+				void raise(SpecificTickerStruct^ ticker, RspInfoStruct^ error_info, bool is_last)
+				{
+					if (OnSubOrderBook_delegate)
+					{
+						OnSubOrderBook_delegate(ticker, error_info, is_last);
+					}
+				}
+			}
+
+			event OnUnSubOrderBookDelegate^ OnUnSubOrderBookEvent
+			{void add(OnUnSubOrderBookDelegate^ handler)
+			{
+				OnUnSubOrderBook_delegate += handler;
+			}
+			void remove(OnUnSubOrderBookDelegate^ handler)
+			{
+				OnUnSubOrderBook_delegate -= handler;
+			}
+			void raise(SpecificTickerStruct^  ticker, RspInfoStruct^ error_info, bool is_last)
+			{
+				if (OnUnSubOrderBook_delegate)
+				{
+					OnUnSubOrderBook_delegate(ticker, error_info, is_last);
+				}
+			}}
+			event OnOrderBookDelegate^ OnOrderBookEvent{void add(OnOrderBookDelegate^ handler)
+			{
+				OnOrderBook_delegate += handler;
+			}
+			void remove(OnOrderBookDelegate^ handler)
+			{
+				OnOrderBook_delegate -= handler;
+			}
+			void raise(OrderBook^ order_book)
+			{
+				if (OnOrderBook_delegate)
+				{
+					OnOrderBook_delegate(order_book);
+				}
+			}}
+
+			event OnSubTickByTickDelegate^ OnSubTickByTickEvent{void add(OnSubTickByTickDelegate^ handler)
+			{
+				OnSubTickByTick_delegate += handler;
+			}
+			void remove(OnSubTickByTickDelegate^ handler)
+			{
+				OnSubTickByTick_delegate -= handler;
+			}
+			void raise(SpecificTickerStruct^  ticker, RspInfoStruct^ error_info, bool is_last)
+			{
+				if (OnSubTickByTick_delegate)
+				{
+					OnSubTickByTick_delegate(ticker, error_info, is_last);
+				}
+			}}
+			event OnUnSubTickByTickDelegate^ OnUnSubTickByTickEvent{void add(OnUnSubTickByTickDelegate^ handler)
+			{
+				OnUnSubTickByTick_delegate += handler;
+			}
+			void remove(OnUnSubTickByTickDelegate^ handler)
+			{
+				OnUnSubTickByTick_delegate -= handler;
+			}
+			void raise(SpecificTickerStruct^  ticker, RspInfoStruct^ error_info, bool is_last)
+			{
+				if (OnUnSubTickByTick_delegate)
+				{
+					OnUnSubTickByTick_delegate(ticker, error_info, is_last);
+				}
+			}}
+			event OnTickByTickDelegate^ OnTickByTickEvent{void add(OnTickByTickDelegate^ handler)
+			{
+				OnTickByTick_delegate += handler;
+			}
+			void remove(OnTickByTickDelegate^ handler)
+			{
+				OnTickByTick_delegate -= handler;
+			}
+			void raise(TickByTickStruct^ tbt_data)
+			{
+				if (OnTickByTick_delegate)
+				{
+					OnTickByTick_delegate(tbt_data);
+				}
+			}}
+			event OnSubscribeAllMarketDataDelegate^ OnSubscribeAllMarketDataEvent{void add(OnSubscribeAllMarketDataDelegate^ handler)
+			{
+				OnSubscribeAllMarketData_delegate += handler;
+			}
+			void remove(OnSubscribeAllMarketDataDelegate^ handler)
+			{
+				OnSubscribeAllMarketData_delegate -= handler;
+			}
+			void raise(RspInfoStruct^ rsp)
+			{
+				if (OnSubscribeAllMarketData_delegate)
+				{
+					OnSubscribeAllMarketData_delegate(rsp);
+				}
+			}}
+			event OnUnSubscribeAllMarketDataDelegate^ OnUnSubscribeAllMarketDataEvent
+			{void add(OnUnSubscribeAllMarketDataDelegate^ handler)
+			{
+				OnUnSubscribeAllMarketData_delegate += handler;
+			}
+			void remove(OnUnSubscribeAllMarketDataDelegate^ handler)
+			{
+				OnUnSubscribeAllMarketData_delegate -= handler;
+			}
+			void raise(RspInfoStruct^ rsp)
+			{
+				if (OnUnSubscribeAllMarketData_delegate)
+				{
+					OnUnSubscribeAllMarketData_delegate(rsp);
+				}
+			}}
+
+			event OnSubscribeAllOrderBookDelegate^ OnSubscribeAllOrderBookEvent
+			{void add(OnSubscribeAllOrderBookDelegate^ handler)
+			{
+				OnSubscribeAllOrderBook_delegate += handler;
+			}
+			void remove(OnSubscribeAllOrderBookDelegate^ handler)
+			{
+				OnSubscribeAllOrderBook_delegate -= handler;
+			}
+			void raise(RspInfoStruct^ rsp)
+			{
+				if (OnSubscribeAllOrderBook_delegate)
+				{
+					OnSubscribeAllOrderBook_delegate(rsp);
+				}
+			}}
+			event OnUnSubscribeAllOrderBookDelegate^ OnUnSubscribeAllOrderBookEvent
+			{void add(OnUnSubscribeAllOrderBookDelegate^ handler)
+			{
+				OnUnSubscribeAllOrderBook_delegate += handler;
+			}
+			void remove(OnUnSubscribeAllOrderBookDelegate^ handler)
+			{
+				OnUnSubscribeAllOrderBook_delegate -= handler;
+			}
+			void raise(RspInfoStruct^ rsp)
+			{
+				if (OnUnSubscribeAllOrderBook_delegate)
+				{
+					OnUnSubscribeAllOrderBook_delegate(rsp);
+				}
+			}}
+			event OnSubscribeAllTickByTickDelegate^ OnSubscribeAllTickByTickEvent
+			{void add(OnSubscribeAllTickByTickDelegate^ handler)
+			{
+				OnSubscribeAllTickByTick_delegate += handler;
+			}
+			void remove(OnSubscribeAllTickByTickDelegate^ handler)
+			{
+				OnSubscribeAllTickByTick_delegate -= handler;
+			}
+			void raise(RspInfoStruct^ rsp)
+			{
+				if (OnSubscribeAllTickByTick_delegate)
+				{
+					OnSubscribeAllTickByTick_delegate(rsp);
+				}
+			}}
+			event OnUnSubscribeAllTickByTickDelegate^ OnUnSubscribeAllTickByTickEvent
+			{void add(OnUnSubscribeAllTickByTickDelegate^ handler)
+			{
+				OnUnSubscribeAllTickByTick_delegate += handler;
+			}
+			void remove(OnUnSubscribeAllTickByTickDelegate^ handler)
+			{
+				OnUnSubscribeAllTickByTick_delegate -= handler;
+			}
+			void raise(RspInfoStruct^ rsp)
+			{
+				if (OnUnSubscribeAllTickByTick_delegate)
+				{
+					OnUnSubscribeAllTickByTick_delegate(rsp);
+				}
+			}}
+
+			event OnQueryTickersPriceInfo^ OnQueryTickersPriceInfoEvent{void add(OnQueryTickersPriceInfo^ handler)
+			{
+				OnQueryTickersPriceInfo_delegate += handler;
+			}
+			void remove(OnQueryTickersPriceInfo^ handler)
+			{
+				OnQueryTickersPriceInfo_delegate -= handler;
+			}
+			void raise(TickerPriceInfo^ ticker_info, RspInfoStruct^ error_info, bool is_last)
+			{
+				if (OnQueryTickersPriceInfo_delegate)
+				{
+					OnQueryTickersPriceInfo_delegate(ticker_info, error_info, is_last);
+				}
+			}}
+
+			
 
 		private:
 			//delegates
@@ -236,7 +445,20 @@ namespace XTP {
 			OnUnSubMarketDataDelegate^ OnUnSubMarketData_delegate;
 			OnDepthMarketDataDelegate^ OnDepthMarketData_delegate;
 			OnQueryAllTickersDelegate^ OnQueryAllTickers_delegate;
-
+			
+			OnSubOrderBookDelegate^ OnSubOrderBook_delegate;
+			OnUnSubOrderBookDelegate^ OnUnSubOrderBook_delegate;
+			OnOrderBookDelegate^ OnOrderBook_delegate;
+			OnSubTickByTickDelegate^ OnSubTickByTick_delegate;
+			OnUnSubTickByTickDelegate^ OnUnSubTickByTick_delegate;
+			OnTickByTickDelegate^ OnTickByTick_delegate;
+			OnSubscribeAllMarketDataDelegate^ OnSubscribeAllMarketData_delegate;
+			OnUnSubscribeAllMarketDataDelegate^ OnUnSubscribeAllMarketData_delegate;
+			OnSubscribeAllOrderBookDelegate^ OnSubscribeAllOrderBook_delegate;
+			OnUnSubscribeAllOrderBookDelegate^ OnUnSubscribeAllOrderBook_delegate;
+			OnSubscribeAllTickByTickDelegate^ OnSubscribeAllTickByTick_delegate;
+			OnUnSubscribeAllTickByTickDelegate^ OnUnSubscribeAllTickByTick_delegate;
+			OnQueryTickersPriceInfo^ OnQueryTickersPriceInfo_delegate;
 		};
 	}
 }
