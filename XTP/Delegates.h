@@ -107,8 +107,8 @@ namespace XTP
 		public delegate void OnOrderCancelDelegate(RspInfoStruct^, OrderCancelInfoStruct^, UInt64);
 		public delegate void OnTradeDelegate(TradeReportStruct^, UInt64);
 		public delegate void OnQueryTradeDelegate(RspInfoStruct^, TradeReportStruct^, int, bool, UInt64);
-		public delegate void OnQueryAssetDelegate(RspInfoStruct^, QueryAssetRspStruct^, int, bool, UInt64);
-		public delegate void OnQueryPositionDelegate(RspInfoStruct^, QueryStkPositionStruct^, int, bool, UInt64);
+		public delegate void OnQueryAssetDelegate( QueryAssetRspStruct^, RspInfoStruct^, int, bool, UInt64);
+		public delegate void OnQueryPositionDelegate(QueryStkPositionStruct^, RspInfoStruct^, int, bool, UInt64);
 
 		///请求查询分级基金信息响应，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		///@param fund_info 查询到的分级基金情况
@@ -154,7 +154,7 @@ namespace XTP
 		///@param request_id 此消息响应函数对应的请求ID
 		///@param is_last 此消息响应函数是否为request_id这条请求所对应的最后一个响应，当为最后一个的时候为true，如果为false，表示还有其他后续消息响应
 		///@remark 需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
-		public delegate void  OnQueryIPOInfoLisDelegatet(QueryIPOTickerRsp^ ipo_info, RspInfoStruct^ error_info, int request_id, bool is_last, UInt64 session_id) ;
+		public delegate void  OnQueryIPOInfoListDelegate(QueryIPOTickerRsp^ ipo_info, RspInfoStruct^ error_info, int request_id, bool is_last, UInt64 session_id) ;
 
 		///请求查询用户新股申购额度信息的响应，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		///@param quota_info 查询到的用户某个市场的今日新股申购额度信息

@@ -17,13 +17,15 @@ namespace XTP
 			m_pAdapter->OnDisconnectedEvent(reason);
 		}
 		void XtpQuoteSpi::OnSubMarketData(XTPST *ticker, XTPRI *error_info, bool is_last) {
-			SpecificTickerStruct^ ticketInfo =MNConv<SpecificTickerStruct^, XTPST>::N2M(ticker);
-			m_pAdapter->OnSubMarketDataEvent(RspInfoConverter(error_info), ticketInfo, is_last);
+			SpecificTickerStruct^ tickerInfo =MNConv<SpecificTickerStruct^, XTPST>::N2M(ticker);
+			m_pAdapter->OnSubMarketDataEvent(RspInfoConverter(error_info), tickerInfo, is_last);
+			delete tickerInfo;
 		}
 		void XtpQuoteSpi::OnUnSubMarketData(XTPST *ticker, XTPRI *error_info, bool is_last) {
 
-			SpecificTickerStruct^ ticketInfo = MNConv<SpecificTickerStruct^, XTPST>::N2M(ticker);//  gcnew SpecificTickerStruct();
-			m_pAdapter->OnUnSubMarketDataEvent(RspInfoConverter(error_info), ticketInfo, is_last);
+			SpecificTickerStruct^ tickerInfo = MNConv<SpecificTickerStruct^, XTPST>::N2M(ticker);//  gcnew SpecificTickerStruct();
+			m_pAdapter->OnUnSubMarketDataEvent(RspInfoConverter(error_info), tickerInfo, is_last);
+			delete tickerInfo;
 		}
 
 		///深度行情通知，包含买一卖一队列
@@ -42,7 +44,7 @@ namespace XTP
 			MarketDataStruct^ data = gcnew MarketDataStruct();
 			// 代码
 			///交易所代码
-			data->exchange_id = market_data->exchange_id;
+			data->exchange_id = (EXCHANGE_TYPE)market_data->exchange_id;
 			///合约代码（不包含交易所信息）
 			data->ticker = gcnew String(market_data->ticker);
 			// 股票等价格
@@ -188,46 +190,16 @@ namespace XTP
 			data->pe_ratio1 = market_data->pe_ratio1;
 			///市盈率2（UA103）
 			data->pe_ratio2 = market_data->pe_ratio2;
-			
-			m_pAdapter->OnDepthMarketDataEvent(data, nullptr, 0, 0, nullptr, 0, 0);
+			m_pAdapter->OnDepthMarketDataEvent(data, bid_qty, bid1_count, max_bid1_count, ask_qty, ask1_count, max_ask1_count);
 			delete data;
 		}
 		
 		void XtpQuoteSpi::OnQueryAllTickers(XTPQSI* ticker_info, XTPRI *error_info, bool is_last) {
-			QuoteStaticInfoStruct^ data = gcnew QuoteStaticInfoStruct();
-			RspInfoStruct^ resInfo = gcnew RspInfoStruct();
-			if (error_info == nullptr || error_info->error_id == 0) {
-				resInfo->error_id = 0;
-				resInfo->error_msg = "";
-				// 收到市场股价数据
-				// 代码
-				///交易所代码
-				data->exchange_id = ticker_info->exchange_id;
-				///合约代码（不包含交易所信息）
-				data->ticker = gcnew String(ticker_info->ticker);
-				/// 合约名称
-				data->ticker_name = gcnew String(ticker_info->ticker_name, 0, sizeof(ticker_info->ticker_name), System::Text::Encoding::UTF8);
-				/// 合约类型
-				data->ticker_type = ticker_info->ticker_type;
-				///昨收盘
-				data->pre_close_price = ticker_info->pre_close_price;
-				///涨停板价
-				data->upper_limit_price = ticker_info->upper_limit_price;
-				///跌停板价
-				data->lower_limit_price = ticker_info->lower_limit_price;
-				///最小变动价位
-				data->price_tick = ticker_info->price_tick;
-				/// 合约最小交易量(买)
-				data->buy_qty_unit = ticker_info->buy_qty_unit;
-				/// 合约最小交易量(卖)
-				data->sell_qty_unit = ticker_info->sell_qty_unit;
-			}
-			else {
-				resInfo->error_id = error_info->error_id;
-				resInfo->error_msg = gcnew String(error_info->error_msg);
-			}
+			QuoteStaticInfoStruct^ data =MNConv<QuoteStaticInfoStruct^,XTPQSI>::N2M(ticker_info);
+			data->ticker_name = gcnew String(ticker_info->ticker_name, 0, sizeof(ticker_info->ticker_name), System::Text::Encoding::UTF8);
+			data->ticker_name = data->ticker_name->TrimEnd('\0');
+			RspInfoStruct^ resInfo = RspInfoConverter(error_info);
 			m_pAdapter->OnQueryAllTickersEvent(resInfo, data, is_last);
-			
 			delete data;
 		}
 				

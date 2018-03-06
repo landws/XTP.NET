@@ -60,7 +60,7 @@ namespace XTP
 			///@param session_id 资金账户对应的session_id,登录时得到
 			int Logout(UInt64 session_id);
 
-			UInt64 InsertOrder(XTPOrderInsert ^order, UInt64 session_id);
+			UInt64 InsertOrder(OrderInsertInfo ^order, UInt64 session_id);
 
 			///报单操作请求
 			///@return 撤单在XTP系统中的ID,如果为‘0’表示撤单发送失败，此时用户可以调用GetApiLastError()来获取错误代码，非“0”表示撤单发送成功，用户需要记录下返回的order_cancel_xtp_id，它保证一个交易日内唯一，不同的交易日不保证唯一性
@@ -82,7 +82,7 @@ namespace XTP
 			///@param session_id 资金账户对应的session_id，登录时得到
 			///@param request_id 用于用户定位查询响应的ID，由用户自定义
 			///@remark 该方法支持分时段查询，如果股票代码为空，则默认查询时间段内的所有报单，否则查询时间段内所有跟股票代码相关的报单，此函数查询出的结果可能对应多个查询结果响应
-			int QueryOrders(XTPQueryOrder ^query_param, UInt64 session_id, int request_id);
+			int QueryOrders(QueryOrderReq ^query_param, UInt64 session_id, int request_id);
 
 			///根据委托编号请求查询相关成交
 			///@return 查询是否成功，“0”表示成功，非“0”表示出错，此时用户可以调用GetApiLastError()来获取错误代码
@@ -98,7 +98,7 @@ namespace XTP
 			///@param session_id 资金账户对应的session_id,登录时得到
 			///@param request_id 用于用户定位查询响应的ID，由用户自定义
 			///@remark 该方法支持分时段查询，如果股票代码为空，则默认查询时间段内的所有成交回报，否则查询时间段内所有跟股票代码相关的成交回报，此函数查询出的结果可能对应多个查询结果响应
-			int QueryTrades(XTPQueryTrader ^query_param, UInt64 session_id, int request_id);
+			int QueryTrades(QueryTraderReq ^query_param, UInt64 session_id, int request_id);
 
 			///请求查询投资者持仓
 			///@return 查询是否成功，“0”表示成功，非“0”表示出错，此时用户可以调用GetApiLastError()来获取错误代码
@@ -252,11 +252,11 @@ namespace XTP
 				{
 					OnQueryAsset_delegate -= hanlder;
 				}
-				void raise(RspInfoStruct^ rsp, QueryAssetRspStruct^ asset, int request_id, bool is_last, UInt64 session_id)
+				void raise( QueryAssetRspStruct^ asset, RspInfoStruct^ rsp, int request_id, bool is_last, UInt64 session_id)
 				{
 					if (OnQueryAsset_delegate)
 					{
-						OnQueryAsset_delegate(rsp, asset, request_id, is_last, session_id);
+						OnQueryAsset_delegate(asset, rsp,  request_id, is_last, session_id);
 					}
 				}
 			}
@@ -270,11 +270,11 @@ namespace XTP
 				{
 					OnQueryPosition_delegate -= hanlder;
 				}
-				void raise(RspInfoStruct^ rsp, QueryStkPositionStruct^ pos, int request_id, bool is_last, UInt64 session_id)
+				void raise( QueryStkPositionStruct^ pos, RspInfoStruct^ rsp, int request_id, bool is_last, UInt64 session_id)
 				{
 					if (OnQueryPosition_delegate)
 					{
-						OnQueryPosition_delegate(rsp, pos, request_id, is_last, session_id);
+						OnQueryPosition_delegate(pos, rsp, request_id, is_last, session_id);
 					}
 				}
 			}

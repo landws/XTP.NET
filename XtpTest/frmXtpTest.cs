@@ -105,7 +105,7 @@ namespace XtpTest
             }
             foreach (var item in tickMap)
             {
-                var order = new XTPOrderInsert()
+                var order = new OrderInsertInfo()
                 {
                     market = MARKET_TYPE.XTP_MKT_SZ_A,
                     order_client_id = (uint)client_id,
@@ -172,7 +172,7 @@ namespace XtpTest
             {
                 return;
             }
-            trader.QueryTrades(new XTPQueryTrader(), tradeSessionID, 0);
+            trader.QueryTrades(new QueryTraderReq(), tradeSessionID, 0);
         }
         #endregion
 
@@ -188,7 +188,7 @@ namespace XtpTest
             log("Trader_OnQueryTradeEvent");
         }
 
-        private void Trader_OnQueryPositionEvent(RspInfoStruct A_0, QueryStkPositionStruct A_1, int A_2, bool A_3, UInt64 session_id)
+        private void Trader_OnQueryPositionEvent( QueryStkPositionStruct A_1, RspInfoStruct A_0, int A_2, bool A_3, UInt64 session_id)
         {
             log("Trader_OnQueryPositionEvent");
         }
@@ -198,7 +198,7 @@ namespace XtpTest
             log("Trader_OnQueryOrderEvent");
         }
 
-        private void Trader_OnQueryAssetEvent(RspInfoStruct A_0, QueryAssetRspStruct A_1, int A_2, bool A_3, UInt64 session_id)
+        private void Trader_OnQueryAssetEvent( QueryAssetRspStruct A_1, RspInfoStruct A_0, int A_2, bool A_3, UInt64 session_id)
         {
             log("Trader_OnQueryAssetEvent");
         }

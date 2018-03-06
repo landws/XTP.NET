@@ -91,7 +91,7 @@ namespace XTP
 			IsLogin = false;
 			return pTdApi->Logout(session_id);
 		}
-		UInt64 XtpTraderAdapter::InsertOrder(XTPOrderInsert ^order, UInt64 session_id) {
+		UInt64 XtpTraderAdapter::InsertOrder(OrderInsertInfo ^order, UInt64 session_id) {
 			XTPOrderInsertInfo *order_info = new XTPOrderInsertInfo();
 			order_info->order_xtp_id = order->order_xtp_id;
 			order_info->order_client_id = order->order_client_id;
@@ -129,7 +129,7 @@ namespace XTP
 		///@param session_id 资金账户对应的session_id，登录时得到
 		///@param request_id 用于用户定位查询响应的ID，由用户自定义
 		///@remark 该方法支持分时段查询，如果股票代码为空，则默认查询时间段内的所有报单，否则查询时间段内所有跟股票代码相关的报单，此函数查询出的结果可能对应多个查询结果响应
-		int XtpTraderAdapter::QueryOrders(XTPQueryOrder ^query_param, UInt64 session_id, int request_id) {
+		int XtpTraderAdapter::QueryOrders(QueryOrderReq ^query_param, UInt64 session_id, int request_id) {
 			XTPQueryOrderReq *query = new XTPQueryOrderReq();
 			IntPtr ticker = Marshal::StringToHGlobalAnsi(query_param->ticker);
 			strcpy(query->ticker, static_cast<char*>(ticker.ToPointer()));
@@ -153,7 +153,7 @@ namespace XTP
 		///@param session_id 资金账户对应的session_id,登录时得到
 		///@param request_id 用于用户定位查询响应的ID，由用户自定义
 		///@remark 该方法支持分时段查询，如果股票代码为空，则默认查询时间段内的所有成交回报，否则查询时间段内所有跟股票代码相关的成交回报，此函数查询出的结果可能对应多个查询结果响应
-		int XtpTraderAdapter::QueryTrades(XTPQueryTrader ^query_param, UInt64 session_id, int request_id) {
+		int XtpTraderAdapter::QueryTrades(QueryTraderReq ^query_param, UInt64 session_id, int request_id) {
 			XTPQueryTraderReq *query = new XTPQueryTraderReq();
 			IntPtr ticker = Marshal::StringToHGlobalAnsi(query_param->ticker);
 			strcpy(query->ticker, static_cast<char*>(ticker.ToPointer()));
