@@ -81,7 +81,7 @@ namespace XTP
 			///@param query_param 需要查询的订单相关筛选条件，其中合约代码可以为空，则默认所有存在的合约代码，如果不为空，请不带空格，并以'\0'结尾，其中起始时间格式为YYYYMMDDHHMMSSsss，为0则默认当前交易日0点，结束时间格式为YYYYMMDDHHMMSSsss，为0则默认当前时间
 			///@param session_id 资金账户对应的session_id，登录时得到
 			///@param request_id 用于用户定位查询响应的ID，由用户自定义
-			///@remark 该方法支持分时段查询，如果股票代码为空，则默认查询时间段内的所有报单，否则查询时间段内所有跟股票代码相关的报单，此函数查询出的结果可能对应多个查询结果响应
+			///@remark 该方法支持分时段查询，如果股票代码为空，则默认查询时间段内的所有报单，否则查询时间段内所有跟股票代码相关的报单，此函数查询出的结果可能对应多个查询结果响应..此函数不建议轮询使用，当报单量过多时，容易造成用户线路拥堵，导致api断线
 			int QueryOrders(QueryOrderReq ^query_param, UInt64 session_id, int request_id);
 
 			///根据委托编号请求查询相关成交
@@ -97,7 +97,7 @@ namespace XTP
 			///@param query_param 需要查询的成交回报筛选条件，其中合约代码可以为空，则默认所有存在的合约代码，如果不为空，请不带空格，并以'\0'结尾，其中起始时间格式为YYYYMMDDHHMMSSsss，为0则默认当前交易日0点，结束时间格式为YYYYMMDDHHMMSSsss，为0则默认当前时间
 			///@param session_id 资金账户对应的session_id,登录时得到
 			///@param request_id 用于用户定位查询响应的ID，由用户自定义
-			///@remark 该方法支持分时段查询，如果股票代码为空，则默认查询时间段内的所有成交回报，否则查询时间段内所有跟股票代码相关的成交回报，此函数查询出的结果可能对应多个查询结果响应
+			///@remark 该方法支持分时段查询，如果股票代码为空，则默认查询时间段内的所有成交回报，否则查询时间段内所有跟股票代码相关的成交回报，此函数查询出的结果可能对应多个查询结果响应.此函数不建议轮询使用，当报单量过多时，容易造成用户线路拥堵，导致api断线
 			int QueryTrades(QueryTraderReq ^query_param, UInt64 session_id, int request_id);
 
 			///请求查询投资者持仓
@@ -113,6 +113,62 @@ namespace XTP
 			///@param session_id 资金账户对应的session_id,登录时得到
 			///@param request_id 用于用户定位查询响应的ID，由用户自定义
 			int QueryAsset(UInt64 session_id, int request_id);
+
+			///请求查询分级基金
+			///@return 查询是否成功，“0”表示成功，非“0”表示出错，此时用户可以调用GetApiLastError()来获取错误代码
+			///@param query_param 需要查询的分级基金筛选条件，其中母基金代码可以为空，则默认所有存在的母基金，如果不为空，请不带空格，并以'\0'结尾，其中交易市场不能为空
+			///@param session_id 资金账户对应的session_id,登录时得到
+			///@param request_id 用于用户定位查询响应的ID，由用户自定义
+			///@remark 此函数查询出的结果可能对应多个查询结果响应
+			int QueryStructuredFund(QueryStructuredFundInfoReq^  query_param, UInt64 session_id, int request_id);
+
+			///资金划拨请求
+			///@return 资金划拨订单在XTP系统中的ID,如果为‘0’表示消息发送失败，此时用户可以调用GetApiLastError()来获取错误代码，非“0”表示消息发送成功，用户需要记录下返回的serial_id，它保证一个交易日内唯一，不同的交易日不保证唯一性
+			///@param fund_transfer 资金划拨的请求信息
+			///@param session_id 资金账户对应的session_id,登录时得到
+			///@remark 此函数支持一号两中心节点之间的资金划拨，注意资金划拨的方向。
+			UInt64  FundTransfer(FundTransferReq^ fund_transfer, UInt64 session_id);
+
+			///请求查询资金划拨
+			///@return 查询是否成功，“0”表示成功，非“0”表示出错，此时用户可以调用GetApiLastError()来获取错误代码
+			///@param query_param 需要查询的资金划拨订单筛选条件，其中serial_id可以为0，则默认所有资金划拨订单，如果不为0，则请求特定的资金划拨订单
+			///@param session_id 资金账户对应的session_id,登录时得到
+			///@param request_id 用于用户定位查询响应的ID，由用户自定义
+			int QueryFundTransfer(QueryFundTransferLogReq^ query_param, UInt64 session_id, int request_id);
+
+			///请求查询ETF清单文件
+			///@return 查询是否成功，“0”表示成功，非“0”表示出错，此时用户可以调用GetApiLastError()来获取错误代码
+			///@param query_param 需要查询的ETF清单文件的筛选条件，其中合约代码可以为空，则默认所有存在的ETF合约代码，market字段也可以为初始值，则默认所有市场的ETF合约
+			///@param session_id 资金账户对应的session_id,登录时得到
+			///@param request_id 用于用户定位查询响应的ID，由用户自定义
+			int QueryETF(QueryETFBaseReq^ query_param, UInt64 session_id, int request_id);
+
+			///请求查询ETF股票篮
+			///@return 查询是否成功，“0”表示成功，非“0”表示出错，此时用户可以调用GetApiLastError()来获取错误代码
+			///@param query_param 需要查询股票篮的的ETF合约，其中合约代码不可以为空，market字段也必须指定
+			///@param session_id 资金账户对应的session_id,登录时得到
+			///@param request_id 用于用户定位查询响应的ID，由用户自定义
+			int QueryETFTickerBasket(QueryETFComponentReq^ query_param, UInt64 session_id, int request_id);
+
+			///请求查询今日新股申购信息列表
+			///@return 查询是否成功，“0”表示成功，非“0”表示出错，此时用户可以调用GetApiLastError()来获取错误代码
+			///@param session_id 资金账户对应的session_id,登录时得到
+			///@param request_id 用于用户定位查询响应的ID，由用户自定义
+			int QueryIPOInfoList(UInt64 session_id, int request_id);
+
+			///请求查询用户新股申购额度信息
+			///@return 查询是否成功，“0”表示成功，非“0”表示出错，此时用户可以调用GetApiLastError()来获取错误代码
+			///@param session_id 资金账户对应的session_id,登录时得到
+			///@param request_id 用于用户定位查询响应的ID，由用户自定义
+			int QueryIPOQuotaInfo(UInt64 session_id, int request_id);
+
+			///请求查询期权合约
+			///@return 查询是否成功，“0”表示成功，非“0”表示出错，此时用户可以调用GetApiLastError()来获取错误代码
+			///@param query_param 需要查询的期权合约的筛选条件，可以为NULL（为NULL表示查询所有的期权合约）
+			///@param session_id 资金账户对应的session_id,登录时得到
+			///@param request_id 用于用户定位查询响应的ID，由用户自定义
+			int QueryOptionAuctionInfo(QueryOptionAuctionInfoReq^ query_param, UInt64 session_id, int request_id);
+
 
 		public:
 			//events//
@@ -252,11 +308,11 @@ namespace XTP
 				{
 					OnQueryAsset_delegate -= hanlder;
 				}
-				void raise( QueryAssetRspStruct^ asset, RspInfoStruct^ rsp, int request_id, bool is_last, UInt64 session_id)
+				void raise(QueryAssetRspStruct^ asset, RspInfoStruct^ rsp, int request_id, bool is_last, UInt64 session_id)
 				{
 					if (OnQueryAsset_delegate)
 					{
-						OnQueryAsset_delegate(asset, rsp,  request_id, is_last, session_id);
+						OnQueryAsset_delegate(asset, rsp, request_id, is_last, session_id);
 					}
 				}
 			}
@@ -270,7 +326,7 @@ namespace XTP
 				{
 					OnQueryPosition_delegate -= hanlder;
 				}
-				void raise( QueryStkPositionStruct^ pos, RspInfoStruct^ rsp, int request_id, bool is_last, UInt64 session_id)
+				void raise(QueryStkPositionStruct^ pos, RspInfoStruct^ rsp, int request_id, bool is_last, UInt64 session_id)
 				{
 					if (OnQueryPosition_delegate)
 					{

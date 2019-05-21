@@ -62,7 +62,7 @@ namespace XTP
 			data->close_price = market_data->close_price;
 
 			// 期货等数据
-			///昨持仓量（目前未填写）
+			/*///昨持仓量（目前未填写）
 			data->pre_open_interest = market_data->pre_open_interest;
 			///持仓量（目前未填写）
 			data->open_interest = market_data->open_interest;
@@ -78,7 +78,7 @@ namespace XTP
 			///昨虚实度（目前未填写）
 			data->pre_delta = market_data->pre_delta;
 			///今虚实度（目前未填写）
-			data->curr_delta = market_data->curr_delta;
+			data->curr_delta = market_data->curr_delta;*/
 
 			/// 时间类
 			data->data_time = market_data->data_time;
@@ -123,7 +123,7 @@ namespace XTP
 			///当前交易状态说明
 			data->ticker_status = gcnew String(market_data->ticker_status);
 			///委托买入总量
-			data->total_bid_qty = market_data->total_bid_qty;
+			/*data->total_bid_qty = market_data->total_bid_qty;
 			///委托卖出总量
 			data->total_ask_qty = market_data->total_ask_qty;
 			///加权平均委买价格
@@ -189,7 +189,7 @@ namespace XTP
 			///市盈率1（UA103）
 			data->pe_ratio1 = market_data->pe_ratio1;
 			///市盈率2（UA103）
-			data->pe_ratio2 = market_data->pe_ratio2;
+			data->pe_ratio2 = market_data->pe_ratio2;*/
 			m_pAdapter->OnDepthMarketDataEvent(data, bid_qty, bid1_count, max_bid1_count, ask_qty, ask1_count, max_ask1_count);
 			delete data;
 		}
@@ -260,7 +260,7 @@ namespace XTP
 		///订阅全市场的行情应答
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
-		void XtpQuoteSpi::OnSubscribeAllMarketData(XTPRI *error_info)
+		void XtpQuoteSpi::OnSubscribeAllMarketData(XTP_EXCHANGE_TYPE exchange_id, XTPRI *error_info)
 		{
 			m_pAdapter->OnSubscribeAllMarketDataEvent(RspInfoConverter(error_info));
 		}
@@ -268,7 +268,7 @@ namespace XTP
 		///退订全市场的行情应答
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
-		void XtpQuoteSpi::OnUnSubscribeAllMarketData(XTPRI *error_info)
+		void XtpQuoteSpi::OnUnSubscribeAllMarketData(XTP_EXCHANGE_TYPE exchange_id, XTPRI *error_info)
 		{
 			m_pAdapter->OnUnSubscribeAllMarketDataEvent(RspInfoConverter(error_info));
 		}
@@ -276,7 +276,7 @@ namespace XTP
 		///订阅全市场的行情订单簿应答
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
-		void XtpQuoteSpi::OnSubscribeAllOrderBook(XTPRI *error_info)
+		void XtpQuoteSpi::OnSubscribeAllOrderBook(XTP_EXCHANGE_TYPE exchange_id, XTPRI *error_info)
 		{
 			m_pAdapter->OnSubscribeAllOrderBookEvent(RspInfoConverter(error_info));
 		}
@@ -284,7 +284,7 @@ namespace XTP
 		///退订全市场的行情订单簿应答
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
-		void XtpQuoteSpi::OnUnSubscribeAllOrderBook(XTPRI *error_info)
+		void XtpQuoteSpi::OnUnSubscribeAllOrderBook(XTP_EXCHANGE_TYPE exchange_id, XTPRI *error_info)
 		{
 			m_pAdapter->OnUnSubscribeAllOrderBookEvent(RspInfoConverter(error_info));
 		}
@@ -292,7 +292,7 @@ namespace XTP
 		///订阅全市场的逐笔行情应答
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
-		void XtpQuoteSpi::OnSubscribeAllTickByTick(XTPRI *error_info)
+		void XtpQuoteSpi::OnSubscribeAllTickByTick(XTP_EXCHANGE_TYPE exchange_id, XTPRI *error_info)
 		{
 			m_pAdapter->OnSubscribeAllTickByTickEvent(RspInfoConverter(error_info));
 		}
@@ -300,7 +300,7 @@ namespace XTP
 		///退订全市场的逐笔行情应答
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
-		void XtpQuoteSpi::OnUnSubscribeAllTickByTick(XTPRI *error_info)
+		void XtpQuoteSpi::OnUnSubscribeAllTickByTick(XTP_EXCHANGE_TYPE exchange_id, XTPRI *error_info)
 		{
 			m_pAdapter->OnUnSubscribeAllTickByTickEvent(RspInfoConverter(error_info));
 		}
@@ -314,5 +314,52 @@ namespace XTP
 			m_pAdapter->OnQueryTickersPriceInfoEvent(MNConv<TickerPriceInfo^, XTPTPI>::N2M(ticker_info),
 				RspInfoConverter(error_info), is_last);
 		}
+
+		///订阅全市场的期权行情应答
+		///@param exchange_id 表示当前全订阅的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
+		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
+		///@remark 需要快速返回
+		void XtpQuoteSpi::OnSubscribeAllOptionMarketData(XTP_EXCHANGE_TYPE exchange_id, XTPRI *error_info)
+		{
+		}
+
+		///退订全市场的期权行情应答
+		///@param exchange_id 表示当前退订的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
+		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
+		///@remark 需要快速返回
+		void XtpQuoteSpi::OnUnSubscribeAllOptionMarketData(XTP_EXCHANGE_TYPE exchange_id, XTPRI *error_info)
+		{
+		}
+
+		///订阅全市场的期权行情订单簿应答
+		///@param exchange_id 表示当前全订阅的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
+		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
+		///@remark 需要快速返回
+		void XtpQuoteSpi::OnSubscribeAllOptionOrderBook(XTP_EXCHANGE_TYPE exchange_id, XTPRI *error_info)
+		{
+		}
+
+		///退订全市场的期权行情订单簿应答
+		///@param exchange_id 表示当前退订的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
+		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
+		///@remark 需要快速返回
+		void XtpQuoteSpi::OnUnSubscribeAllOptionOrderBook(XTP_EXCHANGE_TYPE exchange_id, XTPRI *error_info)
+		{
+		}
+
+		///订阅全市场的期权逐笔行情应答
+		///@param exchange_id 表示当前全订阅的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
+		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
+		///@remark 需要快速返回
+		void XtpQuoteSpi::OnSubscribeAllOptionTickByTick(XTP_EXCHANGE_TYPE exchange_id, XTPRI *error_info) 
+		{}
+
+		///退订全市场的期权逐笔行情应答
+		///@param exchange_id 表示当前退订的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
+		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
+		///@remark 需要快速返回
+		void XtpQuoteSpi::OnUnSubscribeAllOptionTickByTick(XTP_EXCHANGE_TYPE exchange_id, XTPRI *error_info)
+		{}
+
 	}
 }

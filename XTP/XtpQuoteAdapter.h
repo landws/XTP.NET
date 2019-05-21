@@ -69,58 +69,77 @@ namespace XTP {
 			///@remark 此函数必须在Login之前调用
 			void SetHeartBeatInterval(UInt32 interval);
 
-			///订阅/退订行情。
+			///订阅/退订行情。包括股票、指数和期权。
 			///@return 订阅接口调用是否成功，“0”表示接口调用成功，非“0”表示接口调用出错
 			///@param ticker 合约ID数组，注意合约代码必须以'\0'结尾，不包含空格 
 			///@param count 要订阅/退订行情的合约个数
-			///@param exchage_id 交易所代码
+			///@param exchange_id 交易所代码
 			///@param is_subscribe 是否是订阅
 			///@remark 可以一次性订阅同一证券交易所的多个合约，无论用户因为何种问题需要重新登录行情服务器，都需要重新订阅行情
 			int SubscribeMarketData(array<String^>^ ticker, EXCHANGE_TYPE exchange, bool is_subscribe);
 
-			///订阅/退订行情订单簿。
+			///订阅/退订行情订单簿。包括股票、指数和期权。
 			///@return 订阅/退订行情订单簿接口调用是否成功，“0”表示接口调用成功，非“0”表示接口调用出错
 			///@param ticker 合约ID数组，注意合约代码必须以'\0'结尾，不包含空格 
-			///@param exchage_id 交易所代码
+			///@param exchange_id 交易所代码
 			///@param is_subscribe 是否是订阅
 			///@remark 可以一次性订阅同一证券交易所的多个合约，无论用户因为何种问题需要重新登录行情服务器，都需要重新订阅行情(暂不支持)
-			int SubscribeOrderBook(array<String^>^ ticker, EXCHANGE_TYPE exchage_id, bool is_subscribe);
+			int SubscribeOrderBook(array<String^>^ ticker, EXCHANGE_TYPE exchange_id, bool is_subscribe);
 
-			///订阅/退订逐笔行情。
+			///订阅/退订逐笔行情。包括股票、指数和期权。
 			///@return 订阅/退订逐笔行情接口调用是否成功，“0”表示接口调用成功，非“0”表示接口调用出错
 			///@param ticker 合约ID数组，注意合约代码必须以'\0'结尾，不包含空格  
-			///@param exchage_id 交易所代码
+			///@param exchange_id 交易所代码
 			///@param  is_subscribe 是否是订阅
 			///@remark 可以一次性订阅同一证券交易所的多个合约，无论用户因为何种问题需要重新登录行情服务器，都需要重新订阅行情(暂不支持)
-			int SubscribeTickByTick(array<String^>^ ticker, EXCHANGE_TYPE exchage_id, bool is_subscribe);
+			int SubscribeTickByTick(array<String^>^ ticker, EXCHANGE_TYPE exchange_id, bool is_subscribe);
 
 			///订阅/退订全市场的行情
 			///@return 订阅/退订全市场行情接口调用是否成功，“0”表示接口调用成功，非“0”表示接口调用出错
 			///@param  is_subscribe 是否是订阅
 			///@remark 需要与全市场退订行情接口配套使用
-			int SubscribeAllMarketData(bool is_subscribe);
+			int SubscribeAllMarketData(EXCHANGE_TYPE exchange_id, bool is_subscribe);
 
-			///订阅/退订全市场的行情订单簿
+			///订阅/退订全市场的股票行情订单簿
 			///@return 订阅/退订全市场行情订单簿接口调用是否成功，“0”表示接口调用成功，非“0”表示接口调用出错
 			///@param  is_subscribe 是否是订阅
 			///@remark 需要与全市场退订行情订单簿接口配套使用
-			int SubscribeAllOrderBook(bool is_subscribe);
+			int SubscribeAllOrderBook(EXCHANGE_TYPE exchange_id, bool is_subscribe);
 
-			///订阅/退订全市场的逐笔行情
+			///订阅/退订全市场的股票逐笔行情
 			///@return 订阅/退订全市场逐笔行情接口调用是否成功，“0”表示接口调用成功，非“0”表示接口调用出错
 			///@param  is_subscribe 是否是订阅
 			///@remark 需要与全市场退订逐笔行情接口配套使用
-			int SubscribeAllTickByTick(bool is_subscribe);
+			int SubscribeAllTickByTick(EXCHANGE_TYPE exchange_id, bool is_subscribe);
 
 			///获取合约的最新价格信息
 			///@return 查询是否成功，“0”表示查询成功，非“0”表示查询不成功
 			///@param ticker 合约ID数组，注意合约代码必须以'\0'结尾，不包含空格  
-			///@param exchage_id 交易所代码
-			int QueryTickersPriceInfo(array<String^>^ ticker, EXCHANGE_TYPE exchage_id);
+			///@param exchange_id 交易所代码
+			int QueryTickersPriceInfo(array<String^>^ ticker, EXCHANGE_TYPE exchange_id);
 
 			///获取所有合约的最新价格信息
 			///@return 查询是否成功，“0”表示查询成功，非“0”表示查询不成功
 			int QueryAllTickersPriceInfo();
+
+			///订阅/退订全市场的期权行情
+			///@return 订阅/退订全市期权场行情接口调用是否成功，“0”表示接口调用成功，非“0”表示接口调用出错
+			///@param exchange_id 表示当前全订阅的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
+			///@remark 需要与全市场退订期权行情接口配套使用
+			virtual int SubscribeAllOptionMarketData(EXCHANGE_TYPE exchange_id, bool is_subscribe) ;
+
+		
+			///订阅/退订全市场的期权行情订单簿
+			///@return 订阅/退订全市场期权行情订单簿接口调用是否成功，“0”表示接口调用成功，非“0”表示接口调用出错
+			///@param exchange_id 表示当前全订阅的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
+			///@remark 需要与全市场退订期权行情订单簿接口配套使用
+			virtual int SubscribeAllOptionOrderBook(EXCHANGE_TYPE exchange_id, bool is_subscribe);
+
+			///订阅/退订全市场的期权逐笔行情
+			///@return 订阅/退订全市场期权逐笔行情接口调用是否成功，“0”表示接口调用成功，非“0”表示接口调用出错
+			///@param exchange_id 表示当前全订阅的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
+			///@remark 需要与全市场退订期权逐笔行情接口配套使用
+			virtual int SubscribeAllOptionTickByTick(EXCHANGE_TYPE exchange_id, bool is_subscribe) ;
 
 		public:
 			event OnQuoterDisconnectedDelegate^ OnDisconnectedEvent

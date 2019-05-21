@@ -222,6 +222,16 @@ namespace XTP
 		///@remark 需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		void XtpTraderSpi::OnQueryIPOQuotaInfo(XTPQueryIPOQuotaRsp *quota_info, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id){}
 
+		///请求查询期权合约的响应，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
+		///@param option_info 查询到的期权合约情况
+		///@param error_info 查询期权合约发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
+		///@param request_id 此消息响应函数对应的请求ID
+		///@param is_last 此消息响应函数是否为request_id这条请求所对应的最后一个响应，当为最后一个的时候为true，如果为false，表示还有其他后续消息响应
+		///@param session_id 资金账户对应的session_id，登录时得到
+		///@remark 需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
+		void XtpTraderSpi::OnQueryOptionAuctionInfo(XTPQueryOptionAuctionInfoRsp *option_info, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id)
+		{
+		}
 
 	}
 }

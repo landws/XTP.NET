@@ -6,7 +6,7 @@ XTP.NET是[中泰证券极速交易接口](https://xtp.zts.com.cn/home)的.NET�
 项目fork自https://github.com/zerochocobo/XTP.NET,
 在该项目的基础上，想做以下改动：
 
-1. 更新XTP API到最新版本，即版本1.1.16.9（**已完成**）
+1. 更新XTP API到最新版本，即版本XTP_API_20190401_1.1.18.19（**已完成**）
 2. 增加.NET版本使用的样例（**完成行情部分**）
 3. 修改非托管代码转化为托管代码的方式（**完成行情部分**）
 
@@ -28,4 +28,10 @@ XTP.NET是[中泰证券极速交易接口](https://xtp.zts.com.cn/home)的.NET�
 ### 项目维护：
 精力有限，暂不提供技术问题解答，请见谅；如在使用过程中发现bug,欢迎提交issue。
 
+
+### TODO List
+
+1. C# 模拟 C++ 结构体的union
+2. 新增函数中 CLI结构与 API中结构的转换
+3. 业务demo 
 

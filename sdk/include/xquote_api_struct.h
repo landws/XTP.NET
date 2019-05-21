@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////
-///@author ÖĞÌ©Ö¤È¯¹É·İÓĞÏŞ¹«Ë¾
+///@author ä¸­æ³°è¯åˆ¸è‚¡ä»½æœ‰é™å…¬å¸
 ///@file xquote_api_struct.h
-///@brief ¶¨ÒåĞĞÇéÀàÏà¹ØÊı¾İ½á¹¹
+///@brief å®šä¹‰è¡Œæƒ…ç±»ç›¸å…³æ•°æ®ç»“æ„
 /////////////////////////////////////////////////////////////////////////
 #ifndef _XQUOTE_API_STRUCT_H_
 #define _XQUOTE_API_STRUCT_H_
@@ -11,260 +11,285 @@
 
 #pragma pack(8)
 
-///Ö¸¶¨µÄºÏÔ¼
+///æŒ‡å®šçš„åˆçº¦
 typedef struct XTPSpecificTickerStruct
 {
-    ///½»Ò×Ëù´úÂë
+    ///äº¤æ˜“æ‰€ä»£ç 
     XTP_EXCHANGE_TYPE exchange_id;
-    ///ºÏÔ¼´úÂë£¨²»°üº¬½»Ò×ËùĞÅÏ¢£©ÀıÈç"600000"£¬²»´ø¿Õ¸ñ£¬ÒÔ'\0'½áÎ²
+    ///åˆçº¦ä»£ç ï¼ˆä¸åŒ…å«äº¤æ˜“æ‰€ä¿¡æ¯ï¼‰ä¾‹å¦‚"600000"ï¼Œä¸å¸¦ç©ºæ ¼ï¼Œä»¥'\0'ç»“å°¾
 	char	ticker[XTP_TICKER_LEN];
 } XTPST;
 
+///è‚¡ç¥¨ã€åŸºé‡‘ã€å€ºåˆ¸ç­‰é¢å¤–æ•°æ®
+struct XTPMarketDataStockExData {
+    ///å§”æ‰˜ä¹°å…¥æ€»é‡(SH,SZ)
+    int64_t total_bid_qty;
+    ///å§”æ‰˜å–å‡ºæ€»é‡(SH,SZ)
+    int64_t total_ask_qty;
+    ///åŠ æƒå¹³å‡å§”ä¹°ä»·æ ¼(SH,SZ)
+    double ma_bid_price;
+    ///åŠ æƒå¹³å‡å§”å–ä»·æ ¼(SH,SZ)
+    double ma_ask_price;
+    ///å€ºåˆ¸åŠ æƒå¹³å‡å§”ä¹°ä»·æ ¼(SH)
+    double ma_bond_bid_price;
+    ///å€ºåˆ¸åŠ æƒå¹³å‡å§”å–ä»·æ ¼(SH)
+    double ma_bond_ask_price;
+    ///å€ºåˆ¸åˆ°æœŸæ”¶ç›Šç‡(SH)
+    double yield_to_maturity;
+    ///åŸºé‡‘å®æ—¶å‚è€ƒå‡€å€¼(SH,SZ)
+    double iopv;
+    ///ETFç”³è´­ç¬”æ•°(SH)
+    int32_t etf_buy_count;
+    ///ETFèµå›ç¬”æ•°(SH)
+    int32_t etf_sell_count;
+    ///ETFç”³è´­æ•°é‡(SH)
+    double etf_buy_qty;
+    ///ETFç”³è´­é‡‘é¢(SH)
+    double etf_buy_money;
+    ///ETFèµå›æ•°é‡(SH)
+    double etf_sell_qty;
+    ///ETFèµå›é‡‘é¢(SH)
+    double etf_sell_money;
+    ///æƒè¯æ‰§è¡Œçš„æ€»æ•°é‡(SH)
+    double total_warrant_exec_qty;
+    ///æƒè¯è·Œåœä»·æ ¼ï¼ˆå…ƒï¼‰(SH)
+    double warrant_lower_price;
+    ///æƒè¯æ¶¨åœä»·æ ¼ï¼ˆå…ƒï¼‰(SH)
+    double warrant_upper_price;
+    ///ä¹°å…¥æ’¤å•ç¬”æ•°(SH)
+    int32_t cancel_buy_count;
+    ///å–å‡ºæ’¤å•ç¬”æ•°(SH)
+    int32_t cancel_sell_count;
+    ///ä¹°å…¥æ’¤å•æ•°é‡(SH)
+    double cancel_buy_qty;
+    ///å–å‡ºæ’¤å•æ•°é‡(SH)
+    double cancel_sell_qty;
+    ///ä¹°å…¥æ’¤å•é‡‘é¢(SH)
+    double cancel_buy_money;
+    ///å–å‡ºæ’¤å•é‡‘é¢(SH)
+    double cancel_sell_money;
+    ///ä¹°å…¥æ€»ç¬”æ•°(SH)
+    int64_t total_buy_count;
+    ///å–å‡ºæ€»ç¬”æ•°(SH)
+    int64_t total_sell_count;
+    ///ä¹°å…¥å§”æ‰˜æˆäº¤æœ€å¤§ç­‰å¾…æ—¶é—´(SH)
+    int32_t duration_after_buy;
+    ///å–å‡ºå§”æ‰˜æˆäº¤æœ€å¤§ç­‰å¾…æ—¶é—´(SH)
+    int32_t duration_after_sell;
+    ///ä¹°æ–¹å§”æ‰˜ä»·ä½æ•°(SH)
+    int32_t num_bid_orders;
+    ///å–æ–¹å§”æ‰˜ä»·ä½æ•°(SH)
+    int32_t num_ask_orders;
 
-///ĞĞÇé
+    ///åŸºé‡‘T-1æ—¥å‡€å€¼(SZ)
+    double pre_iopv;
+    ///é¢„ç•™
+    int64_t r1;
+    ///é¢„ç•™
+    int64_t r2;
+};
+
+// æœŸæƒé¢å¤–æ•°æ®
+struct XTPMarketDataOptionExData {
+    ///æ³¢æ®µæ€§ä¸­æ–­å‚è€ƒä»·(SH)
+    double  auction_price;
+    ///æ³¢æ®µæ€§ä¸­æ–­é›†åˆç«ä»·è™šæ‹ŸåŒ¹é…é‡(SH)
+    int64_t auction_qty;
+    ///æœ€è¿‘è¯¢ä»·æ—¶é—´(SH)
+    int64_t last_enquiry_time;
+};
+
+enum XTP_MARKETDATA_TYPE {
+    XTP_MARKETDATA_ACTUAL = 0, // ç°è´§(è‚¡ç¥¨/åŸºé‡‘/å€ºåˆ¸ç­‰)
+    XTP_MARKETDATA_OPTION = 1, // æœŸæƒ
+};
+
+///è¡Œæƒ…
 typedef struct XTPMarketDataStruct
 {
-    // ´úÂë
-    ///½»Ò×Ëù´úÂë
+    // ä»£ç 
+    ///äº¤æ˜“æ‰€ä»£ç 
     XTP_EXCHANGE_TYPE exchange_id;
-    ///ºÏÔ¼´úÂë£¨²»°üº¬½»Ò×ËùĞÅÏ¢£©£¬²»´ø¿Õ¸ñ£¬ÒÔ'\0'½áÎ²
+    ///åˆçº¦ä»£ç ï¼ˆä¸åŒ…å«äº¤æ˜“æ‰€ä¿¡æ¯ï¼‰ï¼Œä¸å¸¦ç©ºæ ¼ï¼Œä»¥'\0'ç»“å°¾
     char	ticker[XTP_TICKER_LEN];
 
-    // ¹ÉÆ±µÈ¼Û¸ñ
-	///×îĞÂ¼Û
+    // ä»·æ ¼
+	///æœ€æ–°ä»·
 	double	last_price;
-	///×òÊÕÅÌ
+	///æ˜¨æ”¶ç›˜
 	double	pre_close_price;
-	///½ñ¿ªÅÌ
+	///ä»Šå¼€ç›˜
 	double	open_price;
-	///×î¸ß¼Û
+	///æœ€é«˜ä»·
 	double	high_price;
-	///×îµÍ¼Û
+	///æœ€ä½ä»·
 	double	low_price;
-    ///½ñÊÕÅÌ
+    ///ä»Šæ”¶ç›˜
     double	close_price;
 
-    // ÆÚ»õµÈÊı¾İ
-    ///×ò³Ö²ÖÁ¿£¨Ä¿Ç°Î´ÌîĞ´£©
-    double	pre_open_interest;
-    ///³Ö²ÖÁ¿£¨Ä¿Ç°Î´ÌîĞ´£©
-	double	open_interest;
-    ///ÉÏ´Î½áËã¼Û£¨Ä¿Ç°Î´ÌîĞ´£©
-    double	pre_settlement_price;
-    ///±¾´Î½áËã¼Û£¨Ä¿Ç°Î´ÌîĞ´£©
-	double	settlement_price;
+    // æœŸæƒæ•°æ®
+    ///æ˜¨æ—¥æŒä»“é‡(å¼ )(ç›®å‰æœªå¡«å†™)
+    int64_t pre_total_long_positon;
+    ///æŒä»“é‡(å¼ )
+	int64_t	total_long_positon;
+    ///æ˜¨æ—¥ç»“ç®—ä»·
+    double	pre_settl_price;
+    ///ä»Šæ—¥ç»“ç®—ä»·
+	double	settl_price;
 
-	///ÕÇÍ£°å¼Û£¨Ä¿Ç°Î´ÌîĞ´£©
+	// æ¶¨è·Œåœ
+	///æ¶¨åœä»·
 	double	upper_limit_price;
-	///µøÍ£°å¼Û£¨Ä¿Ç°Î´ÌîĞ´£©
+	///è·Œåœä»·
 	double	lower_limit_price;
-	///×òĞéÊµ¶È£¨Ä¿Ç°Î´ÌîĞ´£©
+	///é¢„ç•™
 	double	pre_delta;
-	///½ñĞéÊµ¶È£¨Ä¿Ç°Î´ÌîĞ´£©
+	///é¢„ç•™
 	double	curr_delta;
 
-    /// Ê±¼äÀà£¬¸ñÊ½ÎªYYYYMMDDHHMMSSsss
+    /// æ—¶é—´ç±»ï¼Œæ ¼å¼ä¸ºYYYYMMDDHHMMSSsss
     int64_t data_time;
 
-    // Á¿¶îÊı¾İ
-    ///ÊıÁ¿£¬Îª×Ü³É½»Á¿£¨µ¥Î»¹É£¬Óë½»Ò×ËùÒ»ÖÂ£©
+    // é‡é¢æ•°æ®
+    ///æ•°é‡ï¼Œä¸ºæ€»æˆäº¤é‡ï¼ˆå•ä½è‚¡ï¼Œä¸äº¤æ˜“æ‰€ä¸€è‡´ï¼‰
     int64_t	qty;
-    ///³É½»½ğ¶î£¬Îª×Ü³É½»½ğ¶î£¨µ¥Î»Ôª£¬Óë½»Ò×ËùÒ»ÖÂ£©
+    ///æˆäº¤é‡‘é¢ï¼Œä¸ºæ€»æˆäº¤é‡‘é¢ï¼ˆå•ä½å…ƒï¼Œä¸äº¤æ˜“æ‰€ä¸€è‡´ï¼‰
     double	turnover;
-    ///µ±ÈÕ¾ù¼Û=(turnover/qty)
+    ///å½“æ—¥å‡ä»·=(turnover/qty)
     double	avg_price;
 
-    // ÂòÂôÅÌ
-    ///Ê®µµÉêÂò¼Û
+    // ä¹°å–ç›˜
+    ///åæ¡£ç”³ä¹°ä»·
     double bid[10];
-    ///Ê®µµÉêÂô¼Û
+    ///åæ¡£ç”³å–ä»·
     double	ask[10];
-    ///Ê®µµÉêÂòÁ¿
+    ///åæ¡£ç”³ä¹°é‡
     int64_t	bid_qty[10];
-    ///Ê®µµÉêÂôÁ¿
+    ///åæ¡£ç”³å–é‡
     int64_t	ask_qty[10];
 
-    // ¶îÍâÊı¾İ£¨ÒÔÏÂÊı¾İÄ¿Ç°Î´ÌîĞ´£©
-    ///³É½»±ÊÊı
+    // é¢å¤–æ•°æ®
+    ///æˆäº¤ç¬”æ•°
     int64_t trades_count;
-    ///µ±Ç°½»Ò××´Ì¬ËµÃ÷
+    ///å½“å‰äº¤æ˜“çŠ¶æ€è¯´æ˜
     char ticker_status[8];
-    ///Î¯ÍĞÂòÈë×ÜÁ¿
-    int64_t total_bid_qty;
-    ///Î¯ÍĞÂô³ö×ÜÁ¿
-    int64_t total_ask_qty;
-    ///¼ÓÈ¨Æ½¾ùÎ¯Âò¼Û¸ñ
-    double ma_bid_price;
-    ///¼ÓÈ¨Æ½¾ùÎ¯Âô¼Û¸ñ
-    double ma_ask_price;
-    ///Õ®È¯¼ÓÈ¨Æ½¾ùÎ¯Âò¼Û¸ñ
-    double ma_bond_bid_price;
-    ///Õ®È¯¼ÓÈ¨Æ½¾ùÎ¯Âô¼Û¸ñ
-    double ma_bond_ask_price;
-    ///Õ®È¯µ½ÆÚÊÕÒæÂÊ
-    double yield_to_maturity;
-    ///ETF¾»Öµ¹ÀÖµ
-    double iopv;
-    ///ETFÉê¹º±ÊÊı
-    int32_t etf_buy_count;
-    ///ETFÊê»Ø±ÊÊı
-    int32_t etf_sell_count;
-    ///ETFÉê¹ºÊıÁ¿
-    double etf_buy_qty;
-    ///ETFÉê¹º½ğ¶î
-    double etf_buy_money;
-    ///ETFÊê»ØÊıÁ¿
-    double etf_sell_qty;
-    ///ETFÊê»Ø½ğ¶î
-    double etf_sell_money;
-    ///È¨Ö¤Ö´ĞĞµÄ×ÜÊıÁ¿
-    double total_warrant_exec_qty;
-    ///È¨Ö¤µøÍ£¼Û¸ñ£¨Ôª£©
-    double warrant_lower_price;
-    ///È¨Ö¤ÕÇÍ£¼Û¸ñ£¨Ôª£©
-    double warrant_upper_price;
-    ///ÂòÈë³·µ¥±ÊÊı
-    int32_t cancel_buy_count;
-    ///Âô³ö³·µ¥±ÊÊı
-    int32_t cancel_sell_count;
-    ///ÂòÈë³·µ¥ÊıÁ¿
-    double cancel_buy_qty;
-    ///Âô³ö³·µ¥ÊıÁ¿
-    double cancel_sell_qty;
-    ///ÂòÈë³·µ¥½ğ¶î
-    double cancel_buy_money;
-    ///Âô³ö³·µ¥½ğ¶î
-    double cancel_sell_money;
-    ///ÂòÈë×Ü±ÊÊı
-    int64_t total_buy_count;
-    ///Âô³ö×Ü±ÊÊı
-    int64_t total_sell_count;
-    ///ÂòÈëÎ¯ÍĞ³É½»×î´óµÈ´ıÊ±¼ä
-    int32_t duration_after_buy;
-    ///Âô³öÎ¯ÍĞ³É½»×î´óµÈ´ıÊ±¼ä
-    int32_t duration_after_sell;
-    ///Âò·½Î¯ÍĞ¼ÛÎ»Êı
-    int32_t num_bid_orders;
-    ///Âô·½Î¯ÍĞ¼ÛÎ»Êı
-    int32_t num_ask_orders;
-    ///³É½»Ê±¼ä£¨UA3113£©
-    int32_t exec_time;
-    ///±ÕÊĞ±êÖ¾£¨UA103/UA104£©
-    char is_market_closed[4];
-    ///ºÏÔ¼³Ö²ÖÁ¿£¨UA103£©
-    double total_position;
-    ///ÊĞÓ¯ÂÊ1£¨UA103£©
-    double pe_ratio1;
-    ///ÊĞÓ¯ÂÊ2£¨UA103£©
-    double pe_ratio2;
+    ///æ•°æ®
+    union {
+        XTPMarketDataStockExData  stk;
+        XTPMarketDataOptionExData opt;
+    } ;
+    ///å†³å®šäº†unionæ˜¯å“ªç§æ•°æ®ç±»å‹
+    XTP_MARKETDATA_TYPE data_type;
+    ///é¢„ç•™
+    int32_t r4;
 } XTPMD;
 
 
-///¹ÉÆ±ĞĞÇé¾²Ì¬ĞÅÏ¢
+///è‚¡ç¥¨è¡Œæƒ…é™æ€ä¿¡æ¯
 typedef struct XTPQuoteStaticInfo {
-    ///½»Ò×Ëù´úÂë
+    ///äº¤æ˜“æ‰€ä»£ç 
     XTP_EXCHANGE_TYPE exchange_id;
-    ///ºÏÔ¼´úÂë£¨²»°üº¬½»Ò×ËùĞÅÏ¢£©£¬²»´ø¿Õ¸ñ£¬ÒÔ'\0'½áÎ²
+    ///åˆçº¦ä»£ç ï¼ˆä¸åŒ…å«äº¤æ˜“æ‰€ä¿¡æ¯ï¼‰ï¼Œä¸å¸¦ç©ºæ ¼ï¼Œä»¥'\0'ç»“å°¾
     char    ticker[XTP_TICKER_LEN];
-    /// ºÏÔ¼Ãû³Æ
+    /// åˆçº¦åç§°
     char    ticker_name[XTP_TICKER_NAME_LEN];
-    /// ºÏÔ¼ÀàĞÍ
+    /// åˆçº¦ç±»å‹
 	XTP_TICKER_TYPE ticker_type;
-    ///×òÊÕÅÌ
+    ///æ˜¨æ”¶ç›˜
     double  pre_close_price;
-    ///ÕÇÍ£°å¼Û
+    ///æ¶¨åœæ¿ä»·
     double  upper_limit_price;
-    ///µøÍ£°å¼Û
+    ///è·Œåœæ¿ä»·
     double  lower_limit_price;
-	///×îĞ¡±ä¶¯¼ÛÎ»
+	///æœ€å°å˜åŠ¨ä»·ä½
 	double  price_tick;
-    /// ºÏÔ¼×îĞ¡½»Ò×Á¿(Âò)
+    /// åˆçº¦æœ€å°äº¤æ˜“é‡(ä¹°)
     int32_t  buy_qty_unit;
-    /// ºÏÔ¼×îĞ¡½»Ò×Á¿(Âô)
+    /// åˆçº¦æœ€å°äº¤æ˜“é‡(å–)
 	int32_t sell_qty_unit;
 } XTPQSI;
 
 
-///¶¨µ¥±¡
+///å®šå•è–„
 typedef struct OrderBookStruct {
-    ///½»Ò×Ëù´úÂë
+    ///äº¤æ˜“æ‰€ä»£ç 
     XTP_EXCHANGE_TYPE exchange_id;
-    ///ºÏÔ¼´úÂë£¨²»°üº¬½»Ò×ËùĞÅÏ¢£©£¬²»´ø¿Õ¸ñ£¬ÒÔ'\0'½áÎ²
+    ///åˆçº¦ä»£ç ï¼ˆä¸åŒ…å«äº¤æ˜“æ‰€ä¿¡æ¯ï¼‰ï¼Œä¸å¸¦ç©ºæ ¼ï¼Œä»¥'\0'ç»“å°¾
     char    ticker[XTP_TICKER_LEN];
 
-    ///×îĞÂ¼Û
+    ///æœ€æ–°ä»·
     double last_price;
-    ///ÊıÁ¿£¬Îª×Ü³É½»Á¿
+    ///æ•°é‡ï¼Œä¸ºæ€»æˆäº¤é‡
     int64_t qty;
-    ///³É½»½ğ¶î£¬Îª×Ü³É½»½ğ¶î
+    ///æˆäº¤é‡‘é¢ï¼Œä¸ºæ€»æˆäº¤é‡‘é¢
     double  turnover;
-    ///³É½»±ÊÊı
+    ///æˆäº¤ç¬”æ•°
     int64_t trades_count;
 
-    // ÂòÂôÅÌ
-    ///Ê®µµÉêÂò¼Û
+    // ä¹°å–ç›˜
+    ///åæ¡£ç”³ä¹°ä»·
     double bid[10];
-    ///Ê®µµÉêÂô¼Û
+    ///åæ¡£ç”³å–ä»·
     double  ask[10];
-    ///Ê®µµÉêÂòÁ¿
+    ///åæ¡£ç”³ä¹°é‡
     int64_t bid_qty[10];
-    ///Ê®µµÉêÂôÁ¿
+    ///åæ¡£ç”³å–é‡
     int64_t ask_qty[10];
-    /// Ê±¼äÀà
+    /// æ—¶é—´ç±»
     int64_t data_time;
 } XTPOB;
 
-////////////////////////////////// Öğ±ÊÊı¾İ
+////////////////////////////////// é€ç¬”æ•°æ®
 
 
-///Öğ±ÊÎ¯ÍĞ(½öÊÊÓÃÉî½»Ëù)
+///é€ç¬”å§”æ‰˜(ä»…é€‚ç”¨æ·±äº¤æ‰€)
 struct XTPTickByTickEntrust {
-    ///ÆµµÀ´úÂë
+    ///é¢‘é“ä»£ç 
     int32_t channel_no;
-    ///Î¯ÍĞĞòºÅ(ÔÚÍ¬Ò»¸öchannel_noÄÚÎ¨Ò»£¬´Ó1¿ªÊ¼Á¬Ğø)
+    ///å§”æ‰˜åºå·(åœ¨åŒä¸€ä¸ªchannel_noå†…å”¯ä¸€ï¼Œä»1å¼€å§‹è¿ç»­)
     int64_t seq;
-    ///Î¯ÍĞ¼Û¸ñ
+    ///å§”æ‰˜ä»·æ ¼
     double  price;
-    ///Î¯ÍĞÊıÁ¿
+    ///å§”æ‰˜æ•°é‡
     int64_t qty;
-    ///'1':Âò; '2':Âô; 'G':½èÈë; 'F':³ö½è
+    ///'1':ä¹°; '2':å–; 'G':å€Ÿå…¥; 'F':å‡ºå€Ÿ
     char  side;
-    ///¶©µ¥Àà±ğ: '1': ÊĞ¼Û; '2': ÏŞ¼Û; '3': ±¾·½×îÓÅ
+    ///è®¢å•ç±»åˆ«: '1': å¸‚ä»·; '2': é™ä»·; 'U': æœ¬æ–¹æœ€ä¼˜
     char ord_type;
 };
 
-///Öğ±Ê³É½»
+///é€ç¬”æˆäº¤
 struct XTPTickByTickTrade {
-    ///ÆµµÀ´úÂë
+    ///é¢‘é“ä»£ç 
     int32_t channel_no;
-    ///Î¯ÍĞĞòºÅ(ÔÚÍ¬Ò»¸öchannel_noÄÚÎ¨Ò»£¬´Ó1¿ªÊ¼Á¬Ğø)
+    ///å§”æ‰˜åºå·(åœ¨åŒä¸€ä¸ªchannel_noå†…å”¯ä¸€ï¼Œä»1å¼€å§‹è¿ç»­)
     int64_t seq;
-    ///³É½»¼Û¸ñ
+    ///æˆäº¤ä»·æ ¼
     double price;
-    ///³É½»Á¿
+    ///æˆäº¤é‡
     int64_t qty;
-    ///³É½»½ğ¶î(½öÊÊÓÃÉÏ½»Ëù)
+    ///æˆäº¤é‡‘é¢(ä»…é€‚ç”¨ä¸Šäº¤æ‰€)
     double money;
-    ///Âò·½¶©µ¥ºÅ
+    ///ä¹°æ–¹è®¢å•å·
     int64_t bid_no;
-    ///Âô·½¶©µ¥ºÅ
+    ///å–æ–¹è®¢å•å·
     int64_t ask_no;
-    /// SH: ÄÚÍâÅÌ±êÊ¶('B':Ö÷¶¯Âò; 'S':Ö÷¶¯Âô; 'N':Î´Öª)
-    /// SZ: ³É½»±êÊ¶('4':³·; 'F':³É½»)
+    /// SH: å†…å¤–ç›˜æ ‡è¯†('B':ä¸»åŠ¨ä¹°; 'S':ä¸»åŠ¨å–; 'N':æœªçŸ¥)
+    /// SZ: æˆäº¤æ ‡è¯†('4':æ’¤; 'F':æˆäº¤)
     char trade_flag;
 };
 
-///Öğ±ÊÊı¾İĞÅÏ¢
+///é€ç¬”æ•°æ®ä¿¡æ¯
 typedef struct XTPTickByTickStruct {
-    ///½»Ò×Ëù´úÂë
+    ///äº¤æ˜“æ‰€ä»£ç 
     XTP_EXCHANGE_TYPE exchange_id;
-    ///ºÏÔ¼´úÂë£¨²»°üº¬½»Ò×ËùĞÅÏ¢£©£¬²»´ø¿Õ¸ñ£¬ÒÔ'\0'½áÎ²
+    ///åˆçº¦ä»£ç ï¼ˆä¸åŒ…å«äº¤æ˜“æ‰€ä¿¡æ¯ï¼‰ï¼Œä¸å¸¦ç©ºæ ¼ï¼Œä»¥'\0'ç»“å°¾
     char ticker[XTP_TICKER_LEN];
-    ///Ô¤Áô
+    ///é¢„ç•™
     int64_t seq;
-    ///Î¯ÍĞÊ±¼ä or ³É½»Ê±¼ä
+    ///å§”æ‰˜æ—¶é—´ or æˆäº¤æ—¶é—´
     int64_t data_time;
-    ///Î¯ÍĞ or ³É½»
+    ///å§”æ‰˜ or æˆäº¤
     XTP_TBT_TYPE type;
 
     union {
@@ -274,16 +299,15 @@ typedef struct XTPTickByTickStruct {
 } XTPTBT;
 
 
-///¹©²éÑ¯µÄ×îĞÂĞÅÏ¢
+///ä¾›æŸ¥è¯¢çš„æœ€æ–°ä¿¡æ¯
 typedef struct XTPTickerPriceInfo {
-    ///½»Ò×Ëù´úÂë
+    ///äº¤æ˜“æ‰€ä»£ç 
     XTP_EXCHANGE_TYPE exchange_id;
-    ///ºÏÔ¼´úÂë£¨²»°üº¬½»Ò×ËùĞÅÏ¢£©£¬²»´ø¿Õ¸ñ£¬ÒÔ'\0'½áÎ²
+    ///åˆçº¦ä»£ç ï¼ˆä¸åŒ…å«äº¤æ˜“æ‰€ä¿¡æ¯ï¼‰ï¼Œä¸å¸¦ç©ºæ ¼ï¼Œä»¥'\0'ç»“å°¾
     char ticker[XTP_TICKER_LEN];
-    ///×îĞÂ¼Û
+    ///æœ€æ–°ä»·
     double last_price;
 } XTPTPI;
-
 
 #pragma pack()
 

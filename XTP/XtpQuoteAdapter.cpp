@@ -202,15 +202,15 @@ namespace XTP {
 		///@return 订阅/退订全市场行情接口调用是否成功，“0”表示接口调用成功，非“0”表示接口调用出错
 		///@param  is_subscribe 是否是订阅
 		///@remark 需要与全市场退订行情接口配套使用
-		int XtpQuoteAdapter::SubscribeAllMarketData(bool is_subscribe)
+		int XtpQuoteAdapter::SubscribeAllMarketData(EXCHANGE_TYPE exchange, bool is_subscribe)
 		{
 			if (is_subscribe)
 			{
-				return pUserApi->SubscribeAllMarketData();
+				return pUserApi->SubscribeAllMarketData((XTP_EXCHANGE_TYPE)exchange);
 			}
 			else
 			{
-				return pUserApi->UnSubscribeAllMarketData();
+				return pUserApi->UnSubscribeAllMarketData((XTP_EXCHANGE_TYPE)exchange);
 			}
 		}
 
@@ -218,15 +218,15 @@ namespace XTP {
 		///@return 订阅/退订全市场行情订单簿接口调用是否成功，“0”表示接口调用成功，非“0”表示接口调用出错
 		///@param  is_subscribe 是否是订阅
 		///@remark 需要与全市场退订行情订单簿接口配套使用
-		int XtpQuoteAdapter::SubscribeAllOrderBook(bool is_subscribe)
+		int XtpQuoteAdapter::SubscribeAllOrderBook(EXCHANGE_TYPE exchange, bool is_subscribe)
 		{
 			if (is_subscribe)
 			{
-				return pUserApi->SubscribeAllOrderBook();
+				return pUserApi->SubscribeAllOrderBook((XTP_EXCHANGE_TYPE)exchange);
 			}
 			else
 			{
-				return pUserApi->UnSubscribeAllOrderBook();
+				return pUserApi->UnSubscribeAllOrderBook((XTP_EXCHANGE_TYPE)exchange);
 			}
 		}
 		
@@ -234,15 +234,15 @@ namespace XTP {
 		///@return 订阅/退订全市场逐笔行情接口调用是否成功，“0”表示接口调用成功，非“0”表示接口调用出错
 		///@param  is_subscribe 是否是订阅
 		///@remark 需要与全市场退订逐笔行情接口配套使用
-		int XtpQuoteAdapter::SubscribeAllTickByTick(bool is_subscribe)
+		int XtpQuoteAdapter::SubscribeAllTickByTick(EXCHANGE_TYPE exchange, bool is_subscribe)
 		{
 			if (is_subscribe)
 			{
-				return pUserApi->SubscribeAllTickByTick();
+				return pUserApi->SubscribeAllTickByTick((XTP_EXCHANGE_TYPE)exchange);
 			}
 			else
 			{
-				return pUserApi->UnSubscribeAllTickByTick();
+				return pUserApi->UnSubscribeAllTickByTick((XTP_EXCHANGE_TYPE)exchange);
 			}
 		}
 				
@@ -276,6 +276,54 @@ namespace XTP {
 		int XtpQuoteAdapter::QueryAllTickersPriceInfo()
 		{
 			return pUserApi->QueryAllTickersPriceInfo();
+		}
+
+		///订阅/退订全市场的期权行情
+			///@return 订阅/退订全市期权场行情接口调用是否成功，“0”表示接口调用成功，非“0”表示接口调用出错
+			///@param exchange_id 表示当前全订阅的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
+			///@remark 需要与全市场退订期权行情接口配套使用
+		int XtpQuoteAdapter::SubscribeAllOptionMarketData(EXCHANGE_TYPE exchange_id, bool is_subscribe)
+		{
+			if (is_subscribe)
+			{
+				return pUserApi->SubscribeAllOptionMarketData((XTP_EXCHANGE_TYPE)exchange_id);
+			}
+			else {
+				return pUserApi->UnSubscribeAllOptionMarketData((XTP_EXCHANGE_TYPE)exchange_id);
+			}
+		}
+
+
+		///订阅/退订全市场的期权行情订单簿
+		///@return 订阅/退订全市场期权行情订单簿接口调用是否成功，“0”表示接口调用成功，非“0”表示接口调用出错
+		///@param exchange_id 表示当前全订阅的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
+		///@remark 需要与全市场退订期权行情订单簿接口配套使用
+		int XtpQuoteAdapter::SubscribeAllOptionOrderBook(EXCHANGE_TYPE exchange_id, bool is_subscribe)
+		{
+			if(is_subscribe)
+			{
+				return pUserApi->SubscribeAllOptionOrderBook((XTP_EXCHANGE_TYPE)exchange_id);
+			}
+			else
+			{
+				return pUserApi->UnSubscribeAllOptionOrderBook((XTP_EXCHANGE_TYPE)exchange_id);
+			}
+		}
+
+		///订阅/退订全市场的期权逐笔行情
+		///@return 订阅/退订全市场期权逐笔行情接口调用是否成功，“0”表示接口调用成功，非“0”表示接口调用出错
+		///@param exchange_id 表示当前全订阅的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
+		///@remark 需要与全市场退订期权逐笔行情接口配套使用
+		int XtpQuoteAdapter::SubscribeAllOptionTickByTick(EXCHANGE_TYPE exchange_id, bool is_subscribe)
+		{
+			if(is_subscribe)
+			{
+				return pUserApi->SubscribeAllOptionTickByTick((XTP_EXCHANGE_TYPE)exchange_id);
+			}
+			else
+			{
+				return pUserApi->UnSubscribeAllOptionTickByTick((XTP_EXCHANGE_TYPE)exchange_id);
+			}
 		}
 	}
 }

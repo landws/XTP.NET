@@ -12,7 +12,7 @@ using namespace System::Security::Permissions;
 // 与程序集关联的信息。
 //
 [assembly:AssemblyTitleAttribute(L"XTP")];
-[assembly:AssemblyDescriptionAttribute(L"XTP C++ ==> .Net Adapter,XTP API 基于version 1.1.16.9")];
+[assembly:AssemblyDescriptionAttribute(L"XTP C++ ==> .Net Adapter,XTP API 基于version 1.1.18.19")];
 [assembly:AssemblyConfigurationAttribute(L"")];
 [assembly:AssemblyCompanyAttribute(L"eTrader")];
 [assembly:AssemblyProductAttribute(L"XTP")];
