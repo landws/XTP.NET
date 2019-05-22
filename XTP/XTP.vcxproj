@@ -138,7 +138,6 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="utils.h" />
-    <ClInclude Include="XTP.h" />
     <ClInclude Include="XtpQuoteAdapter.h" />
     <ClInclude Include="XtpQuoteSpi.h" />
     <ClInclude Include="xtpstruct.h" />

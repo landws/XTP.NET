@@ -103,7 +103,7 @@ namespace XTP
 			///报单提交状态
 			order->order_submit_status = (ORDER_SUBMIT_STATUS_TYPE)order_info->order_submit_status;
 			///报单类型
-			order->order_type = (TOrderTypeType)(order_info->order_type);
+			order->order_type = (OrderTypeType)(order_info->order_type);
 			//order->order_type = gcnew String((char*)order_info->order_type);
 
 			m_pAdapter->OnQueryOrderEvent(RspInfoConverter(error_info), order, request_id, is_last, session_id);
@@ -158,7 +158,10 @@ namespace XTP
 		///@param request_id 此消息响应函数对应的请求ID
 		///@param is_last 此消息响应函数是否为request_id这条请求所对应的最后一个响应，当为最后一个的时候为true，如果为false，表示还有其他后续消息响应
 		///@remark 由于用户可能持有多个股票，一个查询请求可能对应多个响应，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
-		void XtpTraderSpi::OnQueryPosition(XTPQueryStkPositionRsp *position, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id){}
+		void XtpTraderSpi::OnQueryPosition(XTPQueryStkPositionRsp *position, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id)
+		{
+			m_pAdapter->OnQueryPositionEvent(MNConv<QueryStkPositionRsp^, XTPQueryStkPositionRsp>::N2M(position), RspInfoConverter(error_info), request_id, is_last, session_id);
+		}
 
 		///请求查询资金账户响应，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		///@param asset 查询到的资金账户情况
@@ -166,7 +169,10 @@ namespace XTP
 		///@param request_id 此消息响应函数对应的请求ID
 		///@param is_last 此消息响应函数是否为request_id这条请求所对应的最后一个响应，当为最后一个的时候为true，如果为false，表示还有其他后续消息响应
 		///@remark 需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
-		void XtpTraderSpi::OnQueryAsset(XTPQueryAssetRsp *asset, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id){}
+		void XtpTraderSpi::OnQueryAsset(XTPQueryAssetRsp *asset, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id)
+		{
+			m_pAdapter->OnQueryAssetEvent(MNConv<QueryAssetRsp^, XTPQueryAssetRsp>::N2M(asset), RspInfoConverter(error_info), request_id, is_last, session_id);
+		}
 
 		///请求查询分级基金信息响应，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		///@param fund_info 查询到的分级基金情况
@@ -174,7 +180,10 @@ namespace XTP
 		///@param request_id 此消息响应函数对应的请求ID
 		///@param is_last 此消息响应函数是否为request_id这条请求所对应的最后一个响应，当为最后一个的时候为true，如果为false，表示还有其他后续消息响应
 		///@remark 需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
-		void XtpTraderSpi::OnQueryStructuredFund(XTPStructuredFundInfo *fund_info, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id){}
+		void XtpTraderSpi::OnQueryStructuredFund(XTPStructuredFundInfo *fund_info, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id)
+		{
+			m_pAdapter->OnQueryStructuredFundEvent(MNConv<StructuredFundInfo^, XTPStructuredFundInfo>::N2M(fund_info), RspInfoConverter(error_info), request_id, is_last, session_id);
+		}
 
 		///请求查询资金划拨订单响应，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		///@param fund_transfer_info 查询到的资金账户情况
@@ -182,13 +191,19 @@ namespace XTP
 		///@param request_id 此消息响应函数对应的请求ID
 		///@param is_last 此消息响应函数是否为request_id这条请求所对应的最后一个响应，当为最后一个的时候为true，如果为false，表示还有其他后续消息响应
 		///@remark 需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
-		void XtpTraderSpi::OnQueryFundTransfer(XTPFundTransferNotice *fund_transfer_info, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id){}
+		void XtpTraderSpi::OnQueryFundTransfer(XTPFundTransferNotice *fund_transfer_info, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id)
+		{
+			m_pAdapter->OnQueryFundTransferEvent(MNConv<FundTransferNotice^, XTPFundTransferNotice>::N2M(fund_transfer_info), RspInfoConverter(error_info), request_id, is_last, session_id);
+		}
 
 		///资金划拨通知
 		///@param fund_transfer_info 资金划拨通知的具体信息，用户可以通过fund_transfer_info.serial_id来管理订单，通过GetClientIDByXTPID() == client_id来过滤自己的订单。
 		///@param error_info 资金划拨订单被拒绝或者发生错误时错误代码和错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 当资金划拨订单有状态变化的时候，会被调用，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线。所有登录了此用户的客户端都将收到此用户的资金划拨通知。
-		void XtpTraderSpi::OnFundTransfer(XTPFundTransferNotice *fund_transfer_info, XTPRI *error_info, uint64_t session_id){}
+		void XtpTraderSpi::OnFundTransfer(XTPFundTransferNotice *fund_transfer_info, XTPRI *error_info, uint64_t session_id)
+		{
+			m_pAdapter->OnFundTransferEvent(MNConv<FundTransferNotice^, XTPFundTransferNotice>::N2M(fund_transfer_info), RspInfoConverter(error_info), session_id);
+		}
 
 		///请求查询ETF清单文件的响应，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		///@param etf_info 查询到的ETF清单文件情况
@@ -196,7 +211,10 @@ namespace XTP
 		///@param request_id 此消息响应函数对应的请求ID
 		///@param is_last 此消息响应函数是否为request_id这条请求所对应的最后一个响应，当为最后一个的时候为true，如果为false，表示还有其他后续消息响应
 		///@remark 需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
-		void XtpTraderSpi::OnQueryETF(XTPQueryETFBaseRsp *etf_info, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id){}
+		void XtpTraderSpi::OnQueryETF(XTPQueryETFBaseRsp *etf_info, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id)
+		{
+			m_pAdapter->OnQueryETFEvent(MNConv<QueryETFBaseRsp^, XTPQueryETFBaseRsp>::N2M(etf_info), RspInfoConverter(error_info), request_id, is_last, session_id);
+		}
 
 		///请求查询ETF股票篮的响应，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		///@param etf_component_info 查询到的ETF合约的相关成分股信息
@@ -204,7 +222,10 @@ namespace XTP
 		///@param request_id 此消息响应函数对应的请求ID
 		///@param is_last 此消息响应函数是否为request_id这条请求所对应的最后一个响应，当为最后一个的时候为true，如果为false，表示还有其他后续消息响应
 		///@remark 需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
-		void XtpTraderSpi::OnQueryETFBasket(XTPQueryETFComponentRsp *etf_component_info, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id){}
+		void XtpTraderSpi::OnQueryETFBasket(XTPQueryETFComponentRsp *etf_component_info, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id)
+		{
+			m_pAdapter->OnQueryETFBasketEvent(MNConv<QueryETFComponentRsp^, XTPQueryETFComponentRsp>::N2M(etf_component_info), RspInfoConverter(error_info), request_id, is_last, session_id);
+		}
 
 		///请求查询今日新股申购信息列表的响应，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		///@param ipo_info 查询到的今日新股申购的一只股票信息
@@ -212,7 +233,10 @@ namespace XTP
 		///@param request_id 此消息响应函数对应的请求ID
 		///@param is_last 此消息响应函数是否为request_id这条请求所对应的最后一个响应，当为最后一个的时候为true，如果为false，表示还有其他后续消息响应
 		///@remark 需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
-		void XtpTraderSpi::OnQueryIPOInfoList(XTPQueryIPOTickerRsp *ipo_info, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id){}
+		void XtpTraderSpi::OnQueryIPOInfoList(XTPQueryIPOTickerRsp *ipo_info, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id)
+		{
+			m_pAdapter->OnQueryIPOInfoListEvent(MNConv<QueryIPOTickerRsp^, XTPQueryIPOTickerRsp>::N2M(ipo_info), RspInfoConverter(error_info), request_id, is_last, session_id);
+		}
 
 		///请求查询用户新股申购额度信息的响应，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		///@param quota_info 查询到的用户某个市场的今日新股申购额度信息
@@ -220,7 +244,10 @@ namespace XTP
 		///@param request_id 此消息响应函数对应的请求ID
 		///@param is_last 此消息响应函数是否为request_id这条请求所对应的最后一个响应，当为最后一个的时候为true，如果为false，表示还有其他后续消息响应
 		///@remark 需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
-		void XtpTraderSpi::OnQueryIPOQuotaInfo(XTPQueryIPOQuotaRsp *quota_info, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id){}
+		void XtpTraderSpi::OnQueryIPOQuotaInfo(XTPQueryIPOQuotaRsp *quota_info, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id)
+		{
+			m_pAdapter->OnQueryIPOQuotaInfoEvent(MNConv<QueryIPOQuotaRsp^, XTPQueryIPOQuotaRsp>::N2M(quota_info), RspInfoConverter(error_info), request_id, is_last, session_id);
+		}
 
 		///请求查询期权合约的响应，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		///@param option_info 查询到的期权合约情况
@@ -231,6 +258,7 @@ namespace XTP
 		///@remark 需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		void XtpTraderSpi::OnQueryOptionAuctionInfo(XTPQueryOptionAuctionInfoRsp *option_info, XTPRI *error_info, int request_id, bool is_last, uint64_t session_id)
 		{
+			m_pAdapter->OnQueryOptionAuctionInfoEvent(MNConv<QueryOptionAuctionInfoRsp^, XTPQueryOptionAuctionInfoRsp>::N2M(option_info), RspInfoConverter(error_info), request_id, is_last, session_id);
 		}
 
 	}

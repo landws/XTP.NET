@@ -97,7 +97,7 @@ namespace XTP
 		///@param ticker_info 合约的最新价格信息
 		///@param error_info 查询合约的最新价格信息时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@param is_last 是否此次查询的最后一个应答，当为最后一个的时候为true，如果为false，表示还有其他后续消息响应
-		public delegate void OnQueryTickersPriceInfo(TickerPriceInfo^ ticker_info, RspInfoStruct^ error_info, bool is_last);
+		public delegate void OnQueryTickersPriceInfoDelegate(TickerPriceInfo^ ticker_info, RspInfoStruct^ error_info, bool is_last);
 
 		///订阅全市场的期权行情应答
 			///@param exchange_id 表示当前全订阅的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
@@ -109,32 +109,32 @@ namespace XTP
 		///@param exchange_id 表示当前退订的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
-		public delegate void OnUnSubscribeAllOptionMarketDataDeletegate(EXCHANGE_TYPE exchange_id,RspInfoStruct^ error_info);
+		public delegate void OnUnSubscribeAllOptionMarketDataDelegate(EXCHANGE_TYPE exchange_id,RspInfoStruct^ error_info);
 
 		///订阅全市场的期权行情订单簿应答
 		///@param exchange_id 表示当前全订阅的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
-		public delegate void OnSubscribeAllOptionOrderBookDeletegate(EXCHANGE_TYPE exchange_id,RspInfoStruct^ error_info);
+		public delegate void OnSubscribeAllOptionOrderBookDelegate(EXCHANGE_TYPE exchange_id,RspInfoStruct^ error_info);
 
 		///退订全市场的期权行情订单簿应答
 		///@param exchange_id 表示当前退订的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
-		public delegate void OnUnSubscribeAllOptionOrderBookDeletegate(EXCHANGE_TYPE exchange_id,RspInfoStruct^ error_info);
+		public delegate void OnUnSubscribeAllOptionOrderBookDelegate(EXCHANGE_TYPE exchange_id,RspInfoStruct^ error_info);
 
 		///订阅全市场的期权逐笔行情应答
 		///@param exchange_id 表示当前全订阅的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
-		public delegate void OnSubscribeAllOptionTickByTickDeletegate(EXCHANGE_TYPE exchange_id,RspInfoStruct^ error_info);
+		public delegate void OnSubscribeAllOptionTickByTickDelegate(EXCHANGE_TYPE exchange_id,RspInfoStruct^ error_info);
 
 		///退订全市场的期权逐笔行情应答
 		///@param exchange_id 表示当前退订的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
-		public delegate void OnUnSubscribeAllOptionTickByTickDeletegate(EXCHANGE_TYPE exchange_id,RspInfoStruct^ error_info);
-
+		public delegate void OnUnSubscribeAllOptionTickByTickDelegate(EXCHANGE_TYPE exchange_id,RspInfoStruct^ error_info);
+				
 		//trader delegates
 		public delegate void OnTraderDisconnectedDelegate(UInt64, int);
 		public delegate void OnOrderDelegate(RspInfoStruct^, OrderInfoStruct^, UInt64);
@@ -142,8 +142,8 @@ namespace XTP
 		public delegate void OnOrderCancelDelegate(RspInfoStruct^, OrderCancelInfoStruct^, UInt64);
 		public delegate void OnTradeDelegate(TradeReportStruct^, UInt64);
 		public delegate void OnQueryTradeDelegate(RspInfoStruct^, TradeReportStruct^, int, bool, UInt64);
-		public delegate void OnQueryAssetDelegate(QueryAssetRspStruct^, RspInfoStruct^, int, bool, UInt64);
-		public delegate void OnQueryPositionDelegate(QueryStkPositionStruct^, RspInfoStruct^, int, bool, UInt64);
+		public delegate void OnQueryAssetDelegate(QueryAssetRsp^, RspInfoStruct^, int, bool, UInt64);
+		public delegate void OnQueryPositionDelegate(QueryStkPositionRsp^, RspInfoStruct^, int, bool, UInt64);
 		
 		///请求查询分级基金信息响应，需要快速返回，否则会堵塞后续消息，当堵塞严重时，会触发断线
 		///@param fund_info 查询到的分级基金情况

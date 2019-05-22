@@ -324,7 +324,7 @@ namespace XTP {
 		/////////////////////////////////////////////////////////////////////////
 		///TXTPOrderTypeType是一个报单类型类型
 		/////////////////////////////////////////////////////////////////////////
-		public enum class TOrderTypeType
+		public enum class OrderTypeType
 		{
 			Normal = '0',	///正常
 			DeriveFromQuote = '1',		///报价衍生
@@ -409,6 +409,116 @@ namespace XTP {
 			XTP_PRICE_REVERSE_BEST_LIMIT,  ///<对方最优剩余转限价，市价单-深/沪期权
 			XTP_PRICE_LIMIT_OR_CANCEL,	   ///<期权限价申报FOK
 			XTP_PRICE_TYPE_UNKNOWN,		   ///<未知或者无效价格类型
+		};
+
+		//////////////////////////////////////////////////////////////////////////
+		///查询股票持仓情况
+		//////////////////////////////////////////////////////////////////////////
+		[StructLayout(LayoutKind::Sequential)]
+		public ref struct QueryStkPositionRsp
+		{
+			///证券代码
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_LEN)]
+			String^                               ticker;
+			///证券名称
+			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_NAME_LEN)]
+			String^                               ticker_name;
+			///交易市场
+			XTP_MARKET_TYPE     market;
+			///总持仓
+			Int64             total_qty;
+			///可卖持仓
+			Int64				sellable_qty;
+			///持仓成本
+			double              avg_price;
+			///浮动盈亏（保留字段）
+			double              unrealized_pnl;
+			///昨日持仓
+			Int64             yesterday_position;
+			///今日申购赎回数量（申购和赎回数量不可能同时存在，因此可以共用一个字段）
+			Int64				purchase_redeemable_qty;
+
+			/// 持仓方向
+			POSITION_DIRECTION_TYPE      position_direction;
+			///保留字段1
+			UInt32			reserved1;
+			/// 可行权合约
+			Int64             executable_option;
+			/// 可锁定标的
+			Int64             lockable_position;
+			/// 可行权标的
+			Int64             executable_underlying;
+			/// 已锁定标的
+			Int64             locked_position;
+			/// 可用已锁定标的
+			Int64             usable_locked_position;
+
+
+			///(保留字段)
+			[MarshalAs(UnmanagedType::ByValArray, SizeConst = 50 - 6)]
+			array<UInt64>^  unknown;
+		};
+
+		//////////////////////////////////////////////////////////////////////////
+		///账户资金查询响应结构体
+		//////////////////////////////////////////////////////////////////////////
+		[StructLayout(LayoutKind::Sequential)]
+		public ref struct  QueryAssetRsp
+		{
+			///总资产(=可用资金 + 证券资产（目前为0）+ 预扣的资金)
+			double total_asset;
+			///可用资金
+			double buying_power;
+			///证券资产（保留字段，目前为0）
+			double security_asset;
+			///累计买入成交证券占用资金
+			double fund_buy_amount;
+			///累计买入成交交易费用
+			double fund_buy_fee;
+			///累计卖出成交证券所得资金
+			double fund_sell_amount;
+			///累计卖出成交交易费用
+			double fund_sell_fee;
+			///XTP系统预扣的资金（包括购买卖股票时预扣的交易资金+预扣手续费）
+			double withholding_amount;
+			///账户类型
+			ACCOUNT_TYPE account_type;
+
+			///冻结的保证金
+			double frozen_margin;
+			///行权冻结资金
+			double frozen_exec_cash;
+			///行权费用
+			double frozen_exec_fee;
+			///垫付资金
+			double pay_later;
+			///预垫付资金
+			double preadva_pay;
+			///昨日余额
+			double orig_banlance;
+			///当前余额
+			double banlance;
+			///当天出入金
+			double deposit_withdraw;
+			///当日交易资金轧差
+			double trade_netting;
+			///资金资产
+			double captial_asset;
+
+			///强锁资金
+			double force_freeze_amount;
+			///可取资金
+			double preferred_amount;
+
+			// 信用业务新增字段开始（数量1）
+			// 融券卖出所得资金余额（只能用于买券还券）
+			double repay_stock_aval_banlance;
+
+			// 信用业务新增字段结束（数量1）
+
+			///(保留字段)
+			[MarshalAs(UnmanagedType::ByValArray, SizeConst = 43 - 12 - 1)]
+			array<UInt64>^  unknown;
 		};
 
 		///查询分级基金信息结构体
@@ -897,6 +1007,13 @@ namespace XTP {
 			///当前交易状态说明
 			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = 8)]
 			String^ ticker_status;
+			//TODO union 2 行情类型
+			/* ///数据
+			union {
+				XTPMarketDataStockExData  stk;
+				XTPMarketDataOptionExData opt;
+			} ;
+			*/
 			MarketDataStockExData stk;
 			MarketDataOptionExData opt;
 			///决定了union是哪种数据类型
@@ -1022,7 +1139,7 @@ namespace XTP {
 			//TODO:define XTPTickByTickStruct
 			TickByTickEntrust entrust;
 			TickByTickTrade     trade;
-
+			// TODO union 3 委托或者成交 逐笔数据
 			/*union {
 				TickByTickEntrust entrust;
 				TickByTickTrade     trade;
@@ -1160,8 +1277,22 @@ namespace XTP {
 			Int64                 quantity;
 			///报单价格条件
 			PRICE_TYPE          price_type;
-			///买卖方向
+			///TODO:union 1  买卖方向
 			SIDE_TYPE           side;
+			/* union{
+			uint32_t            u32;
+			struct {
+				///买卖方向
+				XTP_SIDE_TYPE               side;
+				///开平标志
+				XTP_POSITION_EFFECT_TYPE    position_effect;
+				///预留字段1
+				uint8_t                     reserved1;
+				///预留字段2
+				uint8_t                     reserved2;
+			};
+		};
+		*/
 			///业务类型
 			BUSINESS_TYPE       business_type;
 			///今成交数量
@@ -1172,19 +1303,19 @@ namespace XTP {
 			Int64                 insert_time;
 			///最后修改时间
 			Int64                 update_time;
-			///撤销时间
+			///撤销时间，格式为YYYYMMDDHHMMSSsss
 			Int64                 cancel_time;
-			///成交金额
+			///成交金额，为此订单的成交总金额
 			double                  trade_amount;
-			///本地报单编号 OMS生成的单号
+			///本地报单编号 OMS生成的单号,不等同于order_xtp_id，为服务器传到报盘的单号
 			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = LOCAL_ORDER_LEN)]
 			String^                    order_local_id;
-			///报单状态
+			///报单状态，订单响应中没有部分成交状态的推送，在查询订单结果中，会有部分成交状态
 			ORDER_STATUS_TYPE   order_status;
-			///报单提交状态
+			///报单提交状态态，OMS内部使用，用户无需关心
 			ORDER_SUBMIT_STATUS_TYPE   order_submit_status;
-			///TODO:报单类型
-			TOrderTypeType       order_type;
+			///报单类型
+			OrderTypeType       order_type;
 		};
 
 		///撤单失败响应消息
@@ -1212,7 +1343,7 @@ namespace XTP {
 			MARKET_TYPE          market;
 			///订单号
 			UInt64                 local_order_id;
-			///成交编号，深交所唯一，上交所每笔交易唯一
+			///成交编号，深交所唯一，上交所每笔交易唯一，当发现2笔成交回报拥有相同的exec_id，则可以认为此笔交易自成交
 			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = EXEC_ID_LEN)]
 			String^                    exec_id;
 			///价格
@@ -1223,15 +1354,29 @@ namespace XTP {
 			Int64                  trade_time;
 			///成交金额
 			double                   trade_amount;
-			///成交序号 --回报记录号，每个交易所唯一
+			///成交序号 --回报记录号，每个交易所唯一，report_index+market字段可以组成唯一标识表示成交回报
 			UInt64                 report_index;
 			///报单编号 --交易所单号
 			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = ORDER_EXCH_LEN)]
 			String^                     order_exch_id;
 			///成交类型  --成交回报中的执行类型
 			TTradeTypeType        trade_type;
-			///买卖方向
+			///TODO union 1 买卖方向
 			SIDE_TYPE            side;
+			/* union{
+				uint32_t            u32;
+				struct {
+					///买卖方向
+					XTP_SIDE_TYPE               side;
+					///开平标志
+					XTP_POSITION_EFFECT_TYPE    position_effect;
+					///预留字段1
+					uint8_t                     reserved1;
+					///预留字段2
+					uint8_t                     reserved2;
+				};
+			};
+			*/
 			///交易所交易员代码 
 			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = BRANCH_PBU_LEN)]
 			String^                    branch_pbu;

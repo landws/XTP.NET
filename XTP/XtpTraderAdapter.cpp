@@ -190,7 +190,9 @@ namespace XTP
 			///@remark 此函数查询出的结果可能对应多个查询结果响应
 		int XtpTraderAdapter::QueryStructuredFund(QueryStructuredFundInfoReq^  query_param, UInt64 session_id, int request_id)
 		{
-			return pTdApi->QueryStructuredFund(nullptr, session_id, request_id);
+			XTPQueryStructuredFundInfoReq native;
+			MNConv<QueryStructuredFundInfoReq^, XTPQueryStructuredFundInfoReq>::M2N(query_param, &native);
+			return pTdApi->QueryStructuredFund(&native, session_id, request_id);
 		}
 
 		///资金划拨请求
@@ -200,7 +202,9 @@ namespace XTP
 		///@remark 此函数支持一号两中心节点之间的资金划拨，注意资金划拨的方向。
 		UInt64  XtpTraderAdapter::FundTransfer(FundTransferReq^ fund_transfer, UInt64 session_id)
 		{
-			return pTdApi->FundTransfer(nullptr, session_id);
+			XTPFundTransferReq native;
+			MNConv<FundTransferReq^, XTPFundTransferReq>::M2N(fund_transfer, &native);
+			return pTdApi->FundTransfer(&native, session_id);
 		}
 
 		///请求查询资金划拨
@@ -210,7 +214,9 @@ namespace XTP
 		///@param request_id 用于用户定位查询响应的ID，由用户自定义
 		int XtpTraderAdapter::QueryFundTransfer(QueryFundTransferLogReq^ query_param, UInt64 session_id, int request_id)
 		{
-			return pTdApi->QueryFundTransfer(nullptr, session_id, request_id);
+			XTPQueryFundTransferLogReq native;
+			MNConv<QueryFundTransferLogReq^, XTPQueryFundTransferLogReq>::M2N(query_param, &native);
+			return pTdApi->QueryFundTransfer(&native, session_id, request_id);
 		}
 
 		///请求查询ETF清单文件
@@ -220,7 +226,9 @@ namespace XTP
 		///@param request_id 用于用户定位查询响应的ID，由用户自定义
 		int XtpTraderAdapter::QueryETF(QueryETFBaseReq^ query_param, UInt64 session_id, int request_id)
 		{
-			return pTdApi->QueryETF(nullptr, session_id, request_id);
+			XTPQueryETFBaseReq native;
+			MNConv<QueryETFBaseReq^, XTPQueryETFBaseReq>::M2N(query_param, &native);
+			return pTdApi->QueryETF(&native, session_id, request_id);
 		}
 
 		///请求查询ETF股票篮
@@ -230,7 +238,9 @@ namespace XTP
 		///@param request_id 用于用户定位查询响应的ID，由用户自定义
 		int XtpTraderAdapter::QueryETFTickerBasket(QueryETFComponentReq^ query_param, UInt64 session_id, int request_id)
 		{
-			return pTdApi->QueryETFTickerBasket(nullptr, session_id, request_id);
+			XTPQueryETFComponentReq native;
+			MNConv<QueryETFComponentReq^, XTPQueryETFComponentReq>::M2N(query_param, &native);
+			return pTdApi->QueryETFTickerBasket(&native, session_id, request_id);
 		}
 
 		///请求查询今日新股申购信息列表
@@ -258,9 +268,9 @@ namespace XTP
 		///@param request_id 用于用户定位查询响应的ID，由用户自定义
 		int XtpTraderAdapter::QueryOptionAuctionInfo(QueryOptionAuctionInfoReq^ query_param, UInt64 session_id, int request_id)
 		{
-			return pTdApi->QueryOptionAuctionInfo(nullptr, session_id,request_id);
+			XTPQueryOptionAuctionInfoReq native;
+			MNConv<QueryOptionAuctionInfoReq^, XTPQueryOptionAuctionInfoReq>::M2N(query_param, &native);
+			return pTdApi->QueryOptionAuctionInfo(&native, session_id,request_id);
 		}
-
-
 	}
 }

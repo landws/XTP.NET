@@ -438,23 +438,137 @@ namespace XTP {
 				}
 			}}
 
-			event OnQueryTickersPriceInfo^ OnQueryTickersPriceInfoEvent{void add(OnQueryTickersPriceInfo^ handler)
+			event OnQueryTickersPriceInfoDelegate^ OnQueryTickersPriceInfoEvent
 			{
-				OnQueryTickersPriceInfo_delegate += handler;
-			}
-			void remove(OnQueryTickersPriceInfo^ handler)
-			{
-				OnQueryTickersPriceInfo_delegate -= handler;
-			}
-			void raise(TickerPriceInfo^ ticker_info, RspInfoStruct^ error_info, bool is_last)
-			{
-				if (OnQueryTickersPriceInfo_delegate)
+				void add(OnQueryTickersPriceInfoDelegate^ handler)
 				{
-					OnQueryTickersPriceInfo_delegate(ticker_info, error_info, is_last);
+					OnQueryTickersPriceInfo_delegate += handler;
 				}
-			}}
+				void remove(OnQueryTickersPriceInfoDelegate^ handler)
+				{
+					OnQueryTickersPriceInfo_delegate -= handler;
+				}
+				void raise(TickerPriceInfo^ ticker_info, RspInfoStruct^ error_info, bool is_last)
+				{
+					if (OnQueryTickersPriceInfo_delegate)
+					{
+						OnQueryTickersPriceInfo_delegate(ticker_info, error_info, is_last);
+					}
+				}
+			}
 
-			
+			event OnSubscribeAllOptionMarketDataDelegate^ OnSubscribeAllOptionMarketDataEvent
+			{
+				void add(OnSubscribeAllOptionMarketDataDelegate^ handler)
+				{
+					OnSubscribeAllOptionMarketData_delegate += handler;
+				}
+				void remove(OnSubscribeAllOptionMarketDataDelegate^ handler)
+				{
+					OnSubscribeAllOptionMarketData_delegate -= handler;
+				}
+				void raise(EXCHANGE_TYPE exchange_id, RspInfoStruct^ error_info)
+				{
+					if (OnSubscribeAllOptionMarketData_delegate)
+					{
+						OnSubscribeAllOptionMarketData_delegate(exchange_id, error_info);
+					}
+				}
+			}
+
+			event OnUnSubscribeAllOptionMarketDataDelegate^ OnUnSubscribeAllOptionMarketDataEvent
+			{
+				void add(OnUnSubscribeAllOptionMarketDataDelegate^ handler)
+				{
+					OnUnSubscribeAllOptionMarketData_delegate += handler;
+				}
+				void remove(OnUnSubscribeAllOptionMarketDataDelegate^ handler)
+				{
+					OnUnSubscribeAllOptionMarketData_delegate -= handler;
+				}
+				void raise(EXCHANGE_TYPE exchange_id, RspInfoStruct^ error_info)
+				{
+					if (OnUnSubscribeAllOptionMarketData_delegate)
+					{
+						OnUnSubscribeAllOptionMarketData_delegate(exchange_id, error_info);
+					}
+				}
+			}
+
+			event OnSubscribeAllOptionOrderBookDelegate^ OnSubscribeAllOptionOrderBookEvent
+			{
+				void add(OnSubscribeAllOptionOrderBookDelegate^ handler)
+				{
+					OnSubscribeAllOptionOrderBook_delegate += handler;
+				}
+				void remove(OnSubscribeAllOptionOrderBookDelegate^ handler)
+				{
+					OnSubscribeAllOptionOrderBook_delegate -= handler;
+				}
+				void raise(EXCHANGE_TYPE exchange_id, RspInfoStruct^ error_info)
+				{
+					if (OnSubscribeAllOptionOrderBook_delegate)
+					{
+						OnSubscribeAllOptionOrderBook_delegate(exchange_id, error_info);
+					}
+				}
+			}
+
+			event OnUnSubscribeAllOptionOrderBookDelegate^ OnUnSubscribeAllOptionOrderBookEvent
+			{
+				void add(OnUnSubscribeAllOptionOrderBookDelegate^ handler)
+				{
+					OnUnSubscribeAllOptionOrderBook_delegate += handler;
+				}
+				void remove(OnUnSubscribeAllOptionOrderBookDelegate^ handler)
+				{
+					OnUnSubscribeAllOptionOrderBook_delegate -= handler;
+				}
+				void raise(EXCHANGE_TYPE exchange_id, RspInfoStruct^ error_info)
+				{
+					if (OnUnSubscribeAllOptionOrderBook_delegate)
+					{
+						OnUnSubscribeAllOptionOrderBook_delegate(exchange_id, error_info);
+					}
+				}
+			}
+			event OnSubscribeAllOptionTickByTickDelegate^ OnSubscribeAllOptionTickByTickEvent
+			{
+				void add(OnSubscribeAllOptionTickByTickDelegate^ handler)
+				{
+					OnSubscribeAllOptionTickByTick_delegate += handler;
+				}
+				void remove(OnSubscribeAllOptionTickByTickDelegate^ handler)
+				{
+					OnSubscribeAllOptionTickByTick_delegate -= handler;
+				}
+				void raise(EXCHANGE_TYPE exchange_id, RspInfoStruct^ error_info)
+				{
+					if (OnSubscribeAllOptionTickByTick_delegate)
+					{
+						OnSubscribeAllOptionTickByTick_delegate(exchange_id, error_info);
+					}
+				}
+			}
+
+			event OnUnSubscribeAllOptionTickByTickDelegate^ OnUnSubscribeAllOptionTickByTickEvent
+			{
+				void add(OnUnSubscribeAllOptionTickByTickDelegate^ handler)
+				{
+					OnUnSubscribeAllOptionTickByTick_delegate += handler;
+				}
+				void remove(OnUnSubscribeAllOptionTickByTickDelegate^ handler)
+				{
+					OnUnSubscribeAllOptionTickByTick_delegate -= handler;
+				}
+				void raise(EXCHANGE_TYPE exchange_id, RspInfoStruct^ error_info)
+				{
+					if (OnUnSubscribeAllOptionTickByTick_delegate)
+					{
+						OnUnSubscribeAllOptionTickByTick_delegate(exchange_id, error_info);
+					}
+				}
+			}		
 
 		private:
 			//delegates
@@ -477,7 +591,20 @@ namespace XTP {
 			OnUnSubscribeAllOrderBookDelegate^ OnUnSubscribeAllOrderBook_delegate;
 			OnSubscribeAllTickByTickDelegate^ OnSubscribeAllTickByTick_delegate;
 			OnUnSubscribeAllTickByTickDelegate^ OnUnSubscribeAllTickByTick_delegate;
-			OnQueryTickersPriceInfo^ OnQueryTickersPriceInfo_delegate;
+			OnQueryTickersPriceInfoDelegate^ OnQueryTickersPriceInfo_delegate;
+			
+			OnSubscribeAllOptionMarketDataDelegate^ OnSubscribeAllOptionMarketData_delegate; //(EXCHANGE_TYPE exchange_id, RspInfoStruct^ error_info);
+
+			OnUnSubscribeAllOptionMarketDataDelegate^  OnUnSubscribeAllOptionMarketData_delegate;// (EXCHANGE_TYPE exchange_id, RspInfoStruct^ error_info);
+			OnSubscribeAllOptionOrderBookDelegate^ OnSubscribeAllOptionOrderBook_delegate;// (EXCHANGE_TYPE exchange_id, RspInfoStruct^ error_info);
+
+			OnUnSubscribeAllOptionOrderBookDelegate^ OnUnSubscribeAllOptionOrderBook_delegate;// (EXCHANGE_TYPE exchange_id, RspInfoStruct^ error_info);
+
+			
+			OnSubscribeAllOptionTickByTickDelegate^ OnSubscribeAllOptionTickByTick_delegate;// (EXCHANGE_TYPE exchange_id, RspInfoStruct^ error_info);
+
+			OnUnSubscribeAllOptionTickByTickDelegate^ OnUnSubscribeAllOptionTickByTick_delegate;// (EXCHANGE_TYPE exchange_id, RspInfoStruct^ error_info);
+
 		};
 	}
 }

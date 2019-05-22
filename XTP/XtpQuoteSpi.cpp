@@ -321,6 +321,7 @@ namespace XTP
 		///@remark 需要快速返回
 		void XtpQuoteSpi::OnSubscribeAllOptionMarketData(XTP_EXCHANGE_TYPE exchange_id, XTPRI *error_info)
 		{
+			m_pAdapter->OnSubscribeAllOptionMarketDataEvent((EXCHANGE_TYPE)exchange_id, RspInfoConverter(error_info));
 		}
 
 		///退订全市场的期权行情应答
@@ -329,6 +330,7 @@ namespace XTP
 		///@remark 需要快速返回
 		void XtpQuoteSpi::OnUnSubscribeAllOptionMarketData(XTP_EXCHANGE_TYPE exchange_id, XTPRI *error_info)
 		{
+			m_pAdapter->OnUnSubscribeAllOptionMarketDataEvent((EXCHANGE_TYPE)exchange_id, RspInfoConverter(error_info));
 		}
 
 		///订阅全市场的期权行情订单簿应答
@@ -337,6 +339,7 @@ namespace XTP
 		///@remark 需要快速返回
 		void XtpQuoteSpi::OnSubscribeAllOptionOrderBook(XTP_EXCHANGE_TYPE exchange_id, XTPRI *error_info)
 		{
+			m_pAdapter->OnSubscribeAllOptionOrderBookEvent((EXCHANGE_TYPE)exchange_id, RspInfoConverter(error_info));
 		}
 
 		///退订全市场的期权行情订单簿应答
@@ -345,6 +348,7 @@ namespace XTP
 		///@remark 需要快速返回
 		void XtpQuoteSpi::OnUnSubscribeAllOptionOrderBook(XTP_EXCHANGE_TYPE exchange_id, XTPRI *error_info)
 		{
+			m_pAdapter->OnUnSubscribeAllOptionOrderBookEvent((EXCHANGE_TYPE)exchange_id, RspInfoConverter(error_info));
 		}
 
 		///订阅全市场的期权逐笔行情应答
@@ -352,14 +356,18 @@ namespace XTP
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
 		void XtpQuoteSpi::OnSubscribeAllOptionTickByTick(XTP_EXCHANGE_TYPE exchange_id, XTPRI *error_info) 
-		{}
+		{
+			m_pAdapter->OnSubscribeAllOptionTickByTickEvent((EXCHANGE_TYPE)exchange_id, RspInfoConverter(error_info));
+		}
 
 		///退订全市场的期权逐笔行情应答
 		///@param exchange_id 表示当前退订的市场，如果为XTP_EXCHANGE_UNKNOWN，表示沪深全市场，XTP_EXCHANGE_SH表示为上海全市场，XTP_EXCHANGE_SZ表示为深圳全市场
 		///@param error_info 取消订阅合约时发生错误时返回的错误信息，当error_info为空，或者error_info.error_id为0时，表明没有错误
 		///@remark 需要快速返回
 		void XtpQuoteSpi::OnUnSubscribeAllOptionTickByTick(XTP_EXCHANGE_TYPE exchange_id, XTPRI *error_info)
-		{}
+		{
+			m_pAdapter->OnUnSubscribeAllOptionTickByTickEvent((EXCHANGE_TYPE)exchange_id, RspInfoConverter(error_info));
+		}
 
 	}
 }

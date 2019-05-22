@@ -113,7 +113,7 @@ namespace XtpTest
                     //order_xtp_id = 0,
                     price = item.Value,
                     price_type = PRICE_TYPE.XTP_PRICE_LIMIT,
-                    side = SIDE_TYPE.XTP_SIDE_BUY,
+                    side = SIDE_TYPE.BUY,
                     ticker = item.Key
                 };
                 trader.InsertOrder(order, tradeSessionID);
@@ -188,7 +188,7 @@ namespace XtpTest
             log("Trader_OnQueryTradeEvent");
         }
 
-        private void Trader_OnQueryPositionEvent( QueryStkPositionStruct A_1, RspInfoStruct A_0, int A_2, bool A_3, UInt64 session_id)
+        private void Trader_OnQueryPositionEvent( QueryStkPositionRsp A_1, RspInfoStruct A_0, int A_2, bool A_3, UInt64 session_id)
         {
             log("Trader_OnQueryPositionEvent");
         }
@@ -198,7 +198,7 @@ namespace XtpTest
             log("Trader_OnQueryOrderEvent");
         }
 
-        private void Trader_OnQueryAssetEvent( QueryAssetRspStruct A_1, RspInfoStruct A_0, int A_2, bool A_3, UInt64 session_id)
+        private void Trader_OnQueryAssetEvent(QueryAssetRsp A_1, RspInfoStruct A_0, int A_2, bool A_3, UInt64 session_id)
         {
             log("Trader_OnQueryAssetEvent");
         }
@@ -296,7 +296,7 @@ namespace XtpTest
             string symbol = txtMdSymbol.Text.Trim();
             if (string.IsNullOrEmpty(symbol))
             {
-                quoter.SubscribeAllMarketData(true);
+                quoter.SubscribeAllMarketData( EXCHANGE_TYPE.XTP_EXCHANGE_SZ,true);
             }
             else
             {
@@ -314,7 +314,7 @@ namespace XtpTest
             string symbol = txtMdSymbol.Text.Trim();
             if (string.IsNullOrEmpty(symbol))
             {
-                quoter.SubscribeAllMarketData(false);
+                quoter.SubscribeAllMarketData( EXCHANGE_TYPE.XTP_EXCHANGE_SZ,false);
             }
             else
             {
@@ -332,7 +332,7 @@ namespace XtpTest
             string symbol = txtMdSymbol.Text.Trim();
             if (string.IsNullOrEmpty(symbol))
             {
-                quoter.SubscribeAllOrderBook(true);
+                quoter.SubscribeAllOrderBook( EXCHANGE_TYPE.XTP_EXCHANGE_SZ,true);
             }
             else
             {
@@ -350,7 +350,7 @@ namespace XtpTest
             string symbol = txtMdSymbol.Text.Trim();
             if (string.IsNullOrEmpty(symbol))
             {
-                quoter.SubscribeAllOrderBook(false);
+                quoter.SubscribeAllOrderBook( EXCHANGE_TYPE.XTP_EXCHANGE_SZ,false);
             }
             else
             {
@@ -368,7 +368,7 @@ namespace XtpTest
             string symbol = txtMdSymbol.Text.Trim();
             if (string.IsNullOrEmpty(symbol))
             {
-                quoter.SubscribeAllTickByTick(true);
+                quoter.SubscribeAllTickByTick( EXCHANGE_TYPE.XTP_EXCHANGE_SZ,true);
             }
             else
             {
@@ -386,7 +386,7 @@ namespace XtpTest
             string symbol = txtMdSymbol.Text.Trim();
             if (string.IsNullOrEmpty(symbol))
             {
-                quoter.SubscribeAllTickByTick(false);
+                quoter.SubscribeAllTickByTick( EXCHANGE_TYPE.XTP_EXCHANGE_SZ,false);
             }
             else
             {

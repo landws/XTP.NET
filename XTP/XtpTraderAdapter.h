@@ -308,7 +308,7 @@ namespace XTP
 				{
 					OnQueryAsset_delegate -= hanlder;
 				}
-				void raise(QueryAssetRspStruct^ asset, RspInfoStruct^ rsp, int request_id, bool is_last, UInt64 session_id)
+				void raise(QueryAssetRsp^ asset, RspInfoStruct^ rsp, int request_id, bool is_last, UInt64 session_id)
 				{
 					if (OnQueryAsset_delegate)
 					{
@@ -326,11 +326,161 @@ namespace XTP
 				{
 					OnQueryPosition_delegate -= hanlder;
 				}
-				void raise(QueryStkPositionStruct^ pos, RspInfoStruct^ rsp, int request_id, bool is_last, UInt64 session_id)
+				void raise(QueryStkPositionRsp^ pos, RspInfoStruct^ rsp, int request_id, bool is_last, UInt64 session_id)
 				{
 					if (OnQueryPosition_delegate)
 					{
 						OnQueryPosition_delegate(pos, rsp, request_id, is_last, session_id);
+					}
+				}
+			}
+			///
+			event OnQueryStructuredFundDelegate ^OnQueryStructuredFundEvent
+			{
+				void add(OnQueryStructuredFundDelegate^ hanlder)
+				{
+					OnQueryStructuredFund_delegate += hanlder;
+				}
+				void remove(OnQueryStructuredFundDelegate^ hanlder)
+				{
+					OnQueryStructuredFund_delegate -= hanlder;
+				}
+				void raise(StructuredFundInfo^ fund_info, RspInfoStruct^ error_info, int request_id, bool is_last, UInt64 session_id)
+				{
+					if (OnQueryStructuredFund_delegate)
+					{
+						OnQueryStructuredFund_delegate(fund_info, error_info, request_id, is_last, session_id);
+					}
+				}
+			}			
+
+			event OnQueryFundTransferDelegate ^OnQueryFundTransferEvent
+			{
+				void add(OnQueryFundTransferDelegate^ hanlder)
+				{
+					OnQueryFundTransfer_delegate += hanlder;
+				}
+				void remove(OnQueryFundTransferDelegate^ hanlder)
+				{
+					OnQueryFundTransfer_delegate -= hanlder;
+				}
+				void raise(FundTransferNotice ^ fund_transfer_info, RspInfoStruct^ error_info, int request_id, bool is_last, UInt64 session_id)
+				{
+					if (OnQueryFundTransfer_delegate)
+					{
+						OnQueryFundTransfer_delegate(fund_transfer_info, error_info, request_id, is_last, session_id);
+					}
+				}
+			}
+			
+			event OnFundTransferDelegate ^OnFundTransferEvent
+			{
+				void add(OnFundTransferDelegate^ hanlder)
+				{
+					OnFundTransfer_delegate += hanlder;
+				}
+				void remove(OnFundTransferDelegate^ hanlder)
+				{
+					OnFundTransfer_delegate -= hanlder;
+				}
+				void raise(FundTransferNotice^ fund_transfer_info, RspInfoStruct^ error_info, UInt64 session_id)
+				{
+					if (OnFundTransfer_delegate)
+					{
+						OnFundTransfer_delegate(fund_transfer_info, error_info, session_id);
+					}
+				}
+			}event OnQueryETFDelegate ^OnQueryETFEvent
+			{
+				void add(OnQueryETFDelegate^ hanlder)
+				{
+					OnQueryETF_delegate += hanlder;
+				}
+				void remove(OnQueryETFDelegate^ hanlder)
+				{
+					OnQueryETF_delegate -= hanlder;
+				}
+				void raise(QueryETFBaseRsp^ etf_info, RspInfoStruct^ error_info, int request_id, bool is_last, UInt64 session_id)
+				{
+					if (OnQueryETF_delegate)
+					{
+						OnQueryETF_delegate(etf_info, error_info, request_id, is_last, session_id);
+					}
+				}
+			}event OnQueryETFBasketDelegate ^OnQueryETFBasketEvent
+			{
+				void add(OnQueryETFBasketDelegate^ hanlder)
+				{
+					OnQueryETFBasket_delegate += hanlder;
+				}
+				void remove(OnQueryETFBasketDelegate^ hanlder)
+				{
+					OnQueryETFBasket_delegate -= hanlder;
+				}
+				void raise(QueryETFComponentRsp^ etf_component_info, RspInfoStruct^ error_info, int request_id, bool is_last, UInt64 session_id)
+				{
+					if (OnQueryETFBasket_delegate)
+					{
+						OnQueryETFBasket_delegate(etf_component_info, error_info, request_id, is_last, session_id);
+					}
+				}
+			}
+			
+
+			event OnQueryIPOInfoListDelegate ^OnQueryIPOInfoListEvent
+			{
+				void add(OnQueryIPOInfoListDelegate^ hanlder)
+				{
+					OnQueryIPOInfoList_delegate += hanlder;
+				}
+				void remove(OnQueryIPOInfoListDelegate^ hanlder)
+				{
+					OnQueryIPOInfoList_delegate -= hanlder;
+				}
+				void raise(QueryIPOTickerRsp^ ipo_info, RspInfoStruct^ error_info, int request_id, bool is_last, UInt64 session_id)
+				{
+					if (OnQueryIPOInfoList_delegate)
+					{
+						OnQueryIPOInfoList_delegate(ipo_info, error_info, request_id, is_last, session_id);
+					}
+				}
+			}
+
+
+			event OnQueryIPOQuotaInfoDelegate ^OnQueryIPOQuotaInfoEvent
+			{
+				void add(OnQueryIPOQuotaInfoDelegate^ hanlder)
+				{
+					OnQueryIPOQuotaInfo_delegate += hanlder;
+				}
+				void remove(OnQueryIPOQuotaInfoDelegate^ hanlder)
+				{
+					OnQueryIPOQuotaInfo_delegate -= hanlder;
+				}
+				void raise(QueryIPOQuotaRsp^ quota_info, RspInfoStruct^ error_info, int request_id, bool is_last, UInt64 session_id)
+				{
+					if (OnQueryIPOQuotaInfo_delegate)
+					{
+						OnQueryIPOQuotaInfo_delegate(quota_info, error_info, request_id, is_last, session_id);
+					}
+				}
+			}
+			
+			event OnQueryOptionAuctionInfoDelegate ^OnQueryOptionAuctionInfoEvent
+			{
+				void add(OnQueryOptionAuctionInfoDelegate^ hanlder)
+				{
+					OnQueryOptionAuctionInfo_delegate += hanlder;
+				}
+				void remove(OnQueryOptionAuctionInfoDelegate^ hanlder)
+				{
+					OnQueryOptionAuctionInfo_delegate -= hanlder;
+				}
+				void raise(QueryOptionAuctionInfoRsp^ option_info, RspInfoStruct^ error_info, int request_id, bool is_last, UInt64 session_id)
+				{
+					if (OnQueryOptionAuctionInfo_delegate)
+					{
+						OnQueryOptionAuctionInfo_delegate(option_info, error_info, request_id, is_last, session_id);
 					}
 				}
 			}
@@ -345,6 +495,15 @@ namespace XTP
 			OnQueryTradeDelegate^ OnQueryTrade_delegate;
 			OnQueryAssetDelegate^ OnQueryAsset_delegate;
 			OnQueryPositionDelegate ^OnQueryPosition_delegate;
+			OnQueryStructuredFundDelegate^ OnQueryStructuredFund_delegate;
+			OnQueryFundTransferDelegate^ OnQueryFundTransfer_delegate;
+			OnFundTransferDelegate^ OnFundTransfer_delegate;
+			OnQueryETFDelegate^ OnQueryETF_delegate;
+			OnQueryETFBasketDelegate^ OnQueryETFBasket_delegate;
+			OnQueryIPOInfoListDelegate^ OnQueryIPOInfoList_delegate;
+			OnQueryIPOQuotaInfoDelegate^ OnQueryIPOQuotaInfo_delegate;
+			OnQueryOptionAuctionInfoDelegate^ OnQueryOptionAuctionInfo_delegate;
+
 		};
 	}
 }
