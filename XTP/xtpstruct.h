@@ -1,3 +1,8 @@
+/*
+C++中带有union的结构体转换C#实现代码 参考文章
+https://blog.csdn.net/mynameisfish/article/details/86609617
+原 XTP结构中有(XTPMarketDataStruct,XTPTickByTickStruct)包含 union
+*/
 #pragma once
 #include"..\sdk\include\xoms_api_fund_struct.h"
 
@@ -673,8 +678,8 @@ namespace XTP {
 		};
 
 		//////////////////////////////////////////////////////////////////////////
-///查询期权竞价交易业务参考信息--请求结构体,请求参数为:交易市场+8位期权代码
-//////////////////////////////////////////////////////////////////////////
+		///查询期权竞价交易业务参考信息--请求结构体,请求参数为:交易市场+8位期权代码
+		//////////////////////////////////////////////////////////////////////////
 		[StructLayout(LayoutKind::Sequential)]
 		public ref struct  QueryOptionAuctionInfoReq {
 			///交易市场
@@ -847,9 +852,9 @@ namespace XTP {
 		};
 
 
-#pragma endregion
+		#pragma endregion
 
-#pragma region quote struct
+		#pragma region quote struct
 
 		public	enum class MARKETDATA_TYPE {
 			XTP_MARKETDATA_ACTUAL = 0, // 现货(股票/基金/债券等)
@@ -937,75 +942,99 @@ namespace XTP {
 			Int64 last_enquiry_time;
 		};
 		///行情
-		[StructLayout(LayoutKind::Sequential)]
+		[StructLayout(LayoutKind::Explicit)]
 		public ref struct  MarketDataStruct
 		{
-			// 代码
 			///交易所代码
+			[FieldOffset(0)]
 			EXCHANGE_TYPE exchange_id;
 			///合约代码（不包含交易所信息）
 			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_LEN)]
+			[FieldOffset(4)]
 			String^	ticker;
 
 			// 股票等价格
 			///最新价
+			[FieldOffset(20)]
 			double	last_price;
 			///昨收盘
+			[FieldOffset(28)]
 			double	pre_close_price;
 			///今开盘
+			[FieldOffset(36)]
 			double	open_price;
 			///最高价
+			[FieldOffset(44)]
 			double	high_price;
 			///最低价
+			[FieldOffset(52)]
 			double	low_price;
 			///今收盘
+			[FieldOffset(60)]
 			double	close_price;
 
 			// 期权等数据
+			[FieldOffset(68)]
 			Int64 pre_total_long_positon;
 			///持仓量(张)
+			[FieldOffset(76)]
 			Int64	total_long_positon;
 			///昨日结算价
+			[FieldOffset(84)]
 			double	pre_settl_price;
 			///今日结算价
+			[FieldOffset(92)]
 			double	settl_price;
 
-			// 涨跌停
 			///涨停价
+			[FieldOffset(100)]
 			double	upper_limit_price;
 			///跌停价
+			[FieldOffset(108)]
 			double	lower_limit_price;
 			///预留
+			[FieldOffset(116)]
 			double	pre_delta;
 			///预留
+			[FieldOffset(124)]
 			double	curr_delta;
 
 			/// 时间类
+			[FieldOffset(132)]
 			Int64 data_time;
 
 			// 量额数据
 			///数量
+			[FieldOffset(140)]
 			Int64	qty;
 			///成交金额
+			[FieldOffset(148)]
 			double	turnover;
 			///当日均价
+			[FieldOffset(156)]
 			double	avg_price;
 
 			// 买卖盘
 			///十档申买价
+			[FieldOffset(164)]
 			array<double>^ bid;
 			///十档申卖价
+			[FieldOffset(244)]
 			array<double>^	ask;
 			///十档申买量
+			[FieldOffset(324)]
 			array<Int64>^	bid_qty;
 			///十档申卖量
+			[FieldOffset(404)]
 			array<Int64>^	ask_qty;
 
 			// lts没有包含的数据（目前未填写）
 			///成交笔数
+			[FieldOffset(484)]
 			Int64 trades_count;
 			///当前交易状态说明
 			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = 8)]
+			[FieldOffset(492)]
 			String^ ticker_status;
 			//TODO union 2 行情类型
 			/* ///数据
@@ -1014,11 +1043,17 @@ namespace XTP {
 				XTPMarketDataOptionExData opt;
 			} ;
 			*/
+			[FieldOffset(500)]
 			MarketDataStockExData stk;
+
+			[FieldOffset(500)]
 			MarketDataOptionExData opt;
 			///决定了union是哪种数据类型
+			//此处偏移为500+上面两个字段类型占用空间最大值 MAX(224,24)
+			[FieldOffset(724)]
 			MARKETDATA_TYPE data_type;
 			///预留
+			[FieldOffset(728)]
 			Int32 r4;
 		};
 
@@ -1123,21 +1158,27 @@ namespace XTP {
 		};
 
 		///逐笔数据信息
-		[StructLayout(LayoutKind::Sequential)]
+		[StructLayout(LayoutKind::Explicit)]
 		public ref struct  TickByTickStruct {
 			///交易所代码
+			[FieldOffset(0)]
 			EXCHANGE_TYPE exchange_id;
 			///合约代码（不包含交易所信息），不带空格，以'\0'结尾
 			[MarshalAs(UnmanagedType::ByValTStr, SizeConst = TICKER_LEN)]
+			[FieldOffset(4)]
 			String^ ticker;
 			///预留
+			[FieldOffset(20)]
 			Int64 seq;
 			///委托时间 or 成交时间
+			[FieldOffset(28)]
 			Int64 data_time;
 			///委托 or 成交
-			//TBT_TYPE type;
-			//TODO:define XTPTickByTickStruct
+			[FieldOffset(36)]
+			TBT_TYPE type;
+			[FieldOffset(40)]
 			TickByTickEntrust entrust;
+			[FieldOffset(40)]
 			TickByTickTrade     trade;
 			// TODO union 3 委托或者成交 逐笔数据
 			/*union {
