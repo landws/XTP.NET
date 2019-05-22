@@ -31,6 +31,5 @@ XTP.NET是[中泰证券极速交易接口](https://xtp.zts.com.cn/home)的.NET�
 
 ### TODO List
 
-1. C# 模拟 C++ 结构体的union
-2. 业务demo 
+1. 业务demo 
 
