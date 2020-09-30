@@ -16,6 +16,10 @@ namespace XtpTest
 {
     public partial class frmXtpTest : Form
     {
+        //【中泰证券】马飞您好，您申请的XTP测试帐号已发放，帐号: 53191002073，密码: tdJClz8S，Key: b8aa7173bba3470e390d787219b2112e
+        //QQ交流群： 188500929
+        //支持电话： 021-20235564(徐士杰)
+        //测试环境详细信息将通过邮件形式发送您的预留邮箱，请注意查收，谢谢回td退【中泰证券】
         public frmXtpTest()
         {
             InitializeComponent();
@@ -24,13 +28,13 @@ namespace XtpTest
         XtpQuoteAdapter quoter;
         int client_id = 1;
         string log_path = "xtp_log";
-        string key;
-        string userid;
-        string pwd;
-        string quote_ip;
-        int quote_port;
-        int trade_port;
-        string trade_ip;
+        string key= "b8aa7173bba3470e390d787219b2112e";
+        string userid= "53191002073";
+        string pwd= "tdJClz8S";
+        string quote_ip= "120.27.164.138";
+        int quote_port= 6002;
+        int trade_port= 6001;
+        string trade_ip= "120.27.164.69";
         ulong tradeSessionID = 0;
         Dictionary<string, QuoteStaticInfoStruct> SymbolMap = new Dictionary<string, QuoteStaticInfoStruct>();
         Dictionary<string, double> tickMap = new Dictionary<string, double>();
